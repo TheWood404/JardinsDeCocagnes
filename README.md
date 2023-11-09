@@ -1,2 +1,2 @@
 # JardinsDeCocagnes
-SAE dans le cadre de notre 3ieme année de BUT informatique pour valider notre année
+SAE dans le cadre de notre 3ieme année de BUT informatique
