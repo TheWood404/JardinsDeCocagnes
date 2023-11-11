@@ -1,19 +1,22 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 const Header = () => {
   return (
     <header className="bg-white text-black p-4 flex justify-between items-center">
       <div>
-        <a href="#"><img src='../images/CocagneLogo.png' width='150' height='100' alt='Logo des Jardins de Cocagnes'></img></a>
+        <a ><img src='../images/CocagneLogo.png' width='150' height='100' alt='Logo des Jardins de Cocagnes'></img></a>
       </div>
       <nav className="flex">
-        <a href="#" className="mr-4">Point de dépôt</a>
-        <a href="#" className="mr-4">Produits</a>
-        <a href="#" className="mr-4">Calendrier</a>
-        <a href="#" className='mr-4'>Abonnement</a>
+        <Link to="/point-de-depot">Point de dépôt</Link>
+        <Link to="/produits">Produits</Link>
+        <Link to="/calendrier">Calendrier</Link>
+        <Link to="/abonnement">Abonnement</Link>
       </nav>
+
       <div className="text-2xl font-bold">
-        <a href="#">Nav Logo</a>
+        <Link to="/compte-strucure">Nav Logo</Link>
       </div>
     </header>
   );
