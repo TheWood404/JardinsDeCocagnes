@@ -2,17 +2,21 @@ import React from 'react';
 
 const Header = () => {
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <div className="text-2xl font-bold">Logo</div>
+    <header className="bg-white text-black p-4 flex justify-between items-center">
+      <div>
+        <a href="#"><img src='../images/CocagneLogo.png' width='150' height='100' alt='Logo des Jardins de Cocagnes'></img></a>
+      </div>
       <nav className="flex">
-        <a href="#" className="mr-4">Accueil</a>
-        <a href="#" className="mr-4">À propos</a>
-        <a href="#" className="mr-4">Services</a>
-        <a href="#">Contact</a>
+        <a href="#" className="mr-4">Point de dépôt</a>
+        <a href="#" className="mr-4">Produits</a>
+        <a href="#" className="mr-4">Calendrier</a>
+        <a href="#" className='mr-4'>Abonnement</a>
       </nav>
-      <div className="text-2xl font-bold">Nav Logo</div>
+      <div className="text-2xl font-bold">
+        <a href="#">Nav Logo</a>
+      </div>
     </header>
   );
 };
 
-export default Header;
+export default Header;  
