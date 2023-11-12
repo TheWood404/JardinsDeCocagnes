@@ -73,8 +73,8 @@ function Calendrier() {
 
   return (
     <div className="flex">
-      <div className="w-3/4 pr-4" style={{ width: '75%' }}>
-        <div style={{ height: '600px' }}>
+      <div className="w-4/5 pr-4" style={{ width: '80%' }}>
+        <div>
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -86,7 +86,7 @@ function Calendrier() {
           />
         </div>
       </div>
-      <div className="w-1/4" style={{ width: '25%' }}>
+      <div className="w-1/5" style={{ width: '20%' }}>
         <div className="flex flex-col">
           <button
             onClick={() => setCurrentAction('Livraisons possibles')}

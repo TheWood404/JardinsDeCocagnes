@@ -20,6 +20,7 @@ function App() {
   return (
     <Router>
       <div style={divStyle}>
+
         <Header />
         <Routes>
           <Route path="/point-de-depot" element={<PointDeDepot />} />
@@ -28,6 +29,7 @@ function App() {
           <Route path="/abonnement" element={<Abonnement />} />
           <Route path="/compte-structure" element={<CompteStructure />} />
         </Routes>
+        
       </div>
     </Router>
   );

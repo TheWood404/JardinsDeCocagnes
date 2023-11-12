@@ -24,7 +24,7 @@ const Header = () => {
           <Link to="/abonnement" className="mr-8">Abonnement</Link>
         </div>
         <div className="bg-green-title rounded-full p-4 w-14 h-14 transform flex items-center justify-center text-center">
-          <Link to="/compte-strucure">
+          <Link to="/compte-structure">
             <FontAwesomeIcon icon={faPagelines} size="2xl" style={{ color: "#ffffff" }} />
           </Link>
         </div>
