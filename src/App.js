@@ -7,8 +7,8 @@ import Calendrier from './screens/calendrier';
 import Abonnement from './screens/abonnement';
 import backgroundImage from './images/VegetablesBackground.jpg';
 import CompteStructure from './screens/compte-structure';
-import AcceuilScreen from './screens/acceuil-connexion';
-import ConnexionResponsable from './components/Connexion_responsable_components';
+import AccueilScreen from './screens/accueil-connexion';
+import ConnexionResponsable from './components/Connexion_responsable';
 import ConnexionAdherent from './components/Connexion_adherent';
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
           <Route path="/calendrier" element={<Calendrier />} />
           <Route path="/abonnement" element={<Abonnement />} />
           <Route path="/compte-structure" element={<CompteStructure />} />
-          <Route path="/acceuil-connexion" element={<AcceuilScreen />} />
+          <Route path="/accueil-connexion" element={<AccueilScreen />} />
           <Route path="/connexion-responsable" element={<ConnexionResponsable />} />
           <Route path="/connexion-adherent" element={<ConnexionAdherent />} />
 

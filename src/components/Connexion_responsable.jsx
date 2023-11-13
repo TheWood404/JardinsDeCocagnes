@@ -12,10 +12,6 @@ const ConnexionResponsable = () => {
       <div className="rounded-3xl bg-white p-8 transform sm:mr-96 sm:ml-96 relative z-10">
         <form className="flex flex-col space-y-4 mb-10">
             <div className="flex flex-col space-y-2">
-                <label className="font-semibold" htmlFor="Nom de la structure">Nom de la structure</label>
-                <input className="rounded-3xl border border-gray-400 p-2" type="text" id="Nom de la structure" name="Nom de la structure" />
-            </div>
-            <div className="flex flex-col space-y-2">
                 <label className="font-semibold" htmlFor="ID de la structure">ID de la structure</label>
                 <input className="rounded-3xl border border-gray-400 p-2" type="password" id="ID de la structure" name="ID de la structure" />
             </div>
@@ -24,7 +20,6 @@ const ConnexionResponsable = () => {
                 <input className="rounded-3xl border border-gray-400 p-2" type="password" id="Numéro d'identification" name="Numéro d'identification" />
             </div>
         </form>
-
 
         <div className="flex items-center flex-col space-y-4">
           <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out">
