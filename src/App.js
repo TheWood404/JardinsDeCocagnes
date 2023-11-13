@@ -7,6 +7,7 @@ import Calendrier from './screens/calendrier';
 import Abonnement from './screens/abonnement';
 import backgroundImage from './images/VegetablesBackground.jpg';
 import CompteStructure from './screens/compte-structure';
+import AcceuilScreen from './screens/acceuil-connexion';
 
 function App() {
   const divStyle = {
@@ -21,13 +22,13 @@ function App() {
     <Router>
       <div style={divStyle}>
 
-        <Header />
         <Routes>
           <Route path="/point-de-depot" element={<PointDeDepot />} />
           <Route path="/produits" element={<Produits />} />
           <Route path="/calendrier" element={<Calendrier />} />
           <Route path="/abonnement" element={<Abonnement />} />
           <Route path="/compte-structure" element={<CompteStructure />} />
+          <Route path="/acceuil-connexion" element={<AcceuilScreen />} />
         </Routes>
         
       </div>
