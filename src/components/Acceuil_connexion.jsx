@@ -1,6 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AccueilConnexion = () => {
+  const navigate = useNavigate();
+
+  const handleAdherentClick = () => {
+    // Naviguez vers la page correspondante au clic sur "Je suis adhérent"
+    navigate('/connexion-adherent'); // Remplacez '/page-adherent' par le chemin de votre page adhérent
+  };
+
+  const handleResponsableClick = () => {
+    // Naviguez vers la page correspondante au clic sur "Je suis responsable"
+    navigate('/connexion-responsable'); // Remplacez '/page-responsable' par le chemin de votre page responsable
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="bg-gradient-to-b from-white via-transparent to-transparent h-full w-full absolute" />
@@ -15,10 +28,10 @@ const AccueilConnexion = () => {
           Bienvenue dans notre espace en ligne qui vous permet d'accéder à différents espaces. Rejoignez-nous pour cultiver la passion du jardinage ensemble et faire pousser de belles amitiés verdoyantes.
         </div>
         <div className="flex items-center flex-col space-y-4">
-          <button className="font-semibold w-72 h-14 bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out">
+          <button className="font-semibold w-72 h-14 bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" onClick={handleAdherentClick}>
             Je suis adhérent
           </button>
-          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out">
+          <button className="font-semibold w-72 h-14 bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" onClick={handleResponsableClick}>
             Je suis responsable
           </button>
         </div>

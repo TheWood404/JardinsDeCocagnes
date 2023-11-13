@@ -8,6 +8,8 @@ import Abonnement from './screens/abonnement';
 import backgroundImage from './images/VegetablesBackground.jpg';
 import CompteStructure from './screens/compte-structure';
 import AcceuilScreen from './screens/acceuil-connexion';
+import ConnexionResponsable from './components/Connexion_responsable_components';
+import ConnexionAdherent from './components/Connexion_adherent';
 
 function App() {
   const divStyle = {
@@ -29,6 +31,9 @@ function App() {
           <Route path="/abonnement" element={<Abonnement />} />
           <Route path="/compte-structure" element={<CompteStructure />} />
           <Route path="/acceuil-connexion" element={<AcceuilScreen />} />
+          <Route path="/connexion-responsable" element={<ConnexionResponsable />} />
+          <Route path="/connexion-adherent" element={<ConnexionAdherent />} />
+
         </Routes>
         
       </div>
