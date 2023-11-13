@@ -25,6 +25,7 @@ const Header = ({ afficherHeader }) => {
             <Link to="/produits" className="mr-8">Produits</Link>
             <Link to="/calendrier" className="mr-8">Calendrier</Link>
             <Link to="/abonnement" className="mr-8">Abonnement</Link>
+            <Link to="/tournees" className="mr-8">Tournées</Link>
           </div>
           <div className="bg-green-title rounded-full p-4 w-14 h-14 transform flex items-center justify-center text-center">
             <Link to="/compte-structure">
@@ -55,6 +56,9 @@ const Header = ({ afficherHeader }) => {
               </li>
               <li className="mb-2">
                 <Link to="/abonnement" onClick={toggleMenu}>Abonnement</Link>
+              </li>
+              <li className="mb-2">
+                <Link to="/tournees" onClick={toggleMenu}>Tournées</Link>
               </li>
               <li>
                 <Link to="/compte-structure" onClick={toggleMenu}>Compte Structure</Link>

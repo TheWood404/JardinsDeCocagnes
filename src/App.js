@@ -1,15 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import PointDeDepot from './screens/point-de-depot';
-import Produits from './screens/produits';
-import Calendrier from './screens/calendrier';
-import Abonnement from './screens/abonnement';
+import PointDeDepot from './screens/Structure/pointDeDepotStructureSC';
+import Produits from './screens/Structure/produitsStructureSC';
+import Calendrier from './screens/Structure/calendrierStructureSC';
+import Abonnement from './screens/Structure/abonnementStructureSC';
 import backgroundImage from './images/VegetablesBackground.jpg';
-import CompteStructure from './screens/compte-structure';
-import AccueilScreen from './screens/accueil-connexion';
-import ConnexionResponsable from './components/Connexion_responsable';
-import ConnexionAdherent from './components/Connexion_adherent';
+import CompteStructure from './screens/Structure/compteStructureSC';
+import AccueilScreen from './screens/accueilConnexionSC';
+import ConnexionResponsable from './components/ConnexionResponsableCP';
+import ConnexionAdherent from './components/ConnexionAdherentCP';
+import Tournees from './screens/Structure/tourneesStructureSC';
 
 function App() {
   const divStyle = {
@@ -33,6 +33,7 @@ function App() {
           <Route path="/accueil-connexion" element={<AccueilScreen />} />
           <Route path="/connexion-responsable" element={<ConnexionResponsable />} />
           <Route path="/connexion-adherent" element={<ConnexionAdherent />} />
+          <Route path="/tournees" element={<Tournees />} />
 
         </Routes>
         

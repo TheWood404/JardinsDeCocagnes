@@ -22,7 +22,7 @@ const ConnexionResponsable = () => {
         </form>
 
         <div className="flex items-center flex-col space-y-4">
-          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out">
+          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" >
             Connexion
           </button>
         </div>

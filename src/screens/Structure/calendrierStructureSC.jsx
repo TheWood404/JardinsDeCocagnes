@@ -1,6 +1,6 @@
 import React from 'react';
-import Calendrier from '../components/Calendrier_components'; // Assurez-vous d'importer le composant Calendrier correctement
-import Header from '../components/Header'; // Importez le composant Header
+import Calendrier from '../../components/CalendrierStructureCP'; // Assurez-vous d'importer le composant Calendrier correctement
+import Header from '../../components/Header'; // Importez le composant Header
 
 
 function CalendrierScreen() {
