@@ -1,6 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 const ConnexionAdherent = () => {
+
+  const nav = useNavigate();
+
+  const handleClickLogin = () => {
+    nav('/compte-adherent');
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="bg-gradient-to-b from-white via-transparent to-transparent h-full w-full absolute" />
@@ -23,7 +32,7 @@ const ConnexionAdherent = () => {
 
 
         <div className="flex items-center flex-col space-y-4">
-          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out">
+          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" onClick={handleClickLogin}>
             Connexion
           </button>
         </div>

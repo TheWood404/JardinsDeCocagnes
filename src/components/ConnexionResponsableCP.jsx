@@ -1,6 +1,20 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ConnexionResponsable = () => {
+
+  const navigate = useNavigate();
+
+  const handleRegisterClick = () => {
+    // Naviguez vers la page correspondante au clic sur "Ma structure n'est pas enregistré"
+    navigate('/structure-register'); 
+  }
+
+  const handleLoginClick = () => {
+    // Naviguez vers la page correspondante au clic sur "Connexion"
+    navigate('/compte-structure'); 
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="bg-gradient-to-b from-white via-transparent to-transparent h-full w-full absolute" />
@@ -22,9 +36,10 @@ const ConnexionResponsable = () => {
         </form>
 
         <div className="flex items-center flex-col space-y-4">
-          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" >
+          <button className="font-semibold w-72 h-14  bg-green-400 rounded-3xl p-2 text-black hover:bg-green-600 transition duration-300 ease-in-out" onClick={handleLoginClick} >
             Connexion
           </button>
+          <div className='underline decoration-1	underline-offset-4 text-green-600 cursor-pointer	' onClick={handleRegisterClick}>Ma structure n'est pas enregistré</div>
         </div>
       </div>
     </div>
