@@ -27,8 +27,8 @@ const HeaderAD = ({ afficherHeader }) => {
           </div>
           <div className="bg-green-title rounded-full p-4 w-14 h-14 transform flex items-center justify-center text-center">
             <Link to="/compte-adherent">
-            <FontAwesomeIcon icon={faUser} />
-                        </Link>
+              <FontAwesomeIcon icon={faUser} size="2xl" style={{ color: "#ffffff" }} />
+            </Link>
           </div>
         </nav>
         <div className="md:hidden">
