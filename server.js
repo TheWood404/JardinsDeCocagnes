@@ -48,6 +48,22 @@ app.post('/api/connexion', (req, res) => {
   });
 });
 
+app.post('/api/connexionstructure', (req, res) => {
+  const { id, num_identification } = req.body;
+  const sql = 'SELECT * FROM structure WHERE id = ? AND num_identification = ?';
+  db.query(sql, [id, num_identification], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la vérification de la connexion :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    
+    const userExists = result.length > 0; // Vérifiez si des résultats ont été renvoyés
+
+    return res.json({ success: true, userExists });
+  });
+});
+
+
 app.listen(port, () => {
   console.log(`Serveur en cours d'exécution sur le port ${port}`);
 

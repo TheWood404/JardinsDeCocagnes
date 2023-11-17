@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ConnexionResponsable = () => {
 
-  const navigate = useNavigate();
+  const [id, setID] = useState('');
+  const [numId, setNumId] = useState('');
+  const [connexionReussie, setConnexionReussie] = useState(null);
+  const nav = useNavigate();
 
   const handleRegisterClick = () => {
     // Naviguez vers la page correspondante au clic sur "Ma structure n'est pas enregistré"
-    navigate('/structure-register'); 
+    nav('/structure-register'); 
   }
 
-  const handleLoginClick = () => {
-    // Naviguez vers la page correspondante au clic sur "Connexion"
-    navigate('/compte-structure'); 
+  const handleLoginClick = async () => {
+    try {
+      const response = await axios.post('/api/connexionstructure', { id, num_identification: numId });
+
+      if (response.data.success && response.data.userExists) {
+        setConnexionReussie(true);
+        nav('/compte-structure');
+      } else {
+        setConnexionReussie(false);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la connexion :', error);
+      setConnexionReussie(false);
+    } 
   }
 
   return (
@@ -27,11 +42,11 @@ const ConnexionResponsable = () => {
         <form className="flex flex-col space-y-4 mb-10">
             <div className="flex flex-col space-y-2">
                 <label className="font-semibold" htmlFor="ID de la structure">ID de la structure</label>
-                <input className="rounded-3xl border border-gray-400 p-2" type="password" id="ID de la structure" name="ID de la structure" />
+                <input className="rounded-3xl border border-gray-400 p-2" type="password" id="ID" name="ID" value={id} onChange={(e) => setID(e.target.value)}/>
             </div>
             <div className="flex flex-col space-y-2">
                 <label className="font-semibold" htmlFor="Numéro d'identification">Numéro d'identification</label>
-                <input className="rounded-3xl border border-gray-400 p-2" type="password" id="Numéro d'identification" name="Numéro d'identification" />
+                <input className="rounded-3xl border border-gray-400 p-2" type="password" id="numId" name="numId" value={numId} onChange={(e) => setNumId(e.target.value)}/>
             </div>
         </form>
 
