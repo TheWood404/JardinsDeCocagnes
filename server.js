@@ -48,6 +48,19 @@ app.post('/api/connexion', (req, res) => {
   });
 });
 
+app.get('/api/coordonneespointdedepot', (req, res) => {
+  const sql = 'SELECT ST_X(coordonnees) AS longitude, ST_Y(coordonnees) AS latitude FROM point_de_depot';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des coordonnées des points de dépôt :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    return res.json({ success: true, coordonnees: result });
+  });
+});
+
+
+
 app.listen(port, () => {
   console.log(`Serveur en cours d'exécution sur le port ${port}`);
 

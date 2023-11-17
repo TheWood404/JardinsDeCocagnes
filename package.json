@@ -31,7 +31,8 @@
     "react-router-dom": "^6.18.0",
     "react-scripts": "^5.0.1",
     "tailwindcss": "^3.3.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "wellknown": "^0.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -63,5 +64,4 @@
   "author": "",
   "license": "ISC",
   "proxy": "http://localhost:3001"
-
 }
