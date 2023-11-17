@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+const child_process = require('child_process');
 
 const app = express();
 
@@ -10,13 +11,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  };
-  
-  app.use(cors(corsOptions));
-  
+  origin: 'http://localhost:3000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const port = 3001;
 
@@ -50,4 +50,22 @@ app.post('/api/connexion', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Serveur en cours d'exécution sur le port ${port}`);
+
+  // Exécute npm start de App.js dans un processus enfant
+  const child = child_process.spawn('npm', ['start'], {
+    cwd: __dirname, // Assurez-vous que le répertoire de travail est correct
+    shell: true // Utilisez un shell pour exécuter la commande
+  });
+
+  child.stdout.on('data', (data) => {
+    console.log(`Sortie de npm start : ${data}`);
+  });
+
+  child.stderr.on('data', (data) => {
+    console.error(`Erreur de npm start : ${data}`);
+  });
+
+  child.on('close', (code) => {
+    console.log(`npm start a été fermé avec le code ${code}`);
+  });
 });
