@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-
-
-const ConnexionAdherent = () => {
+const ConnexionAdherent = ({ setUtilisateurConnecte }) => {
   const [mail, setMail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [connexionReussie, setConnexionReussie] = useState(null);
@@ -13,9 +11,10 @@ const ConnexionAdherent = () => {
   const handleClickLogin = async () => {
     try {
       const response = await axios.post('/api/connexion', { mail, mdp_espace_client: motDePasse });
-
+  
       if (response.data.success && response.data.userExists) {
         setConnexionReussie(true);
+        setUtilisateurConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
         nav('/compte-adherent');
       } else {
         setConnexionReussie(false);
@@ -23,6 +22,24 @@ const ConnexionAdherent = () => {
     } catch (error) {
       console.error('Erreur lors de la connexion :', error);
       setConnexionReussie(false);
+    }
+  };
+  
+
+  //fonction de deconnexion
+  const handleClickLogout = async () => {
+    try {
+      const response = await axios.get('/api/deconnexion');
+
+      if (response.data.success) {
+        setConnexionReussie(false);
+        nav('/');
+      } else {
+        setConnexionReussie(true);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion :', error);
+      setConnexionReussie(true);
     }
   };
 

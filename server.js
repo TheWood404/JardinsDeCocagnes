@@ -48,6 +48,19 @@ app.post('/api/connexion', (req, res) => {
   });
 });
 
+app.post('/api/deconnexion', (req, res) => {
+  const { mail } = req.body;
+  const sql = 'SELECT COUNT(*) AS count FROM adherent WHERE mail = ?';
+  db.query(sql, [mail], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la vérification de la connexion :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    const userExists = result[0].count > 0;
+    return res.json({ success: true, userExists });
+  });
+});
+
 app.get('/api/coordonneespointdedepot', (req, res) => {
   const sql = 'SELECT ST_X(coordonnees) AS longitude, ST_Y(coordonnees) AS latitude FROM point_de_depot';
   db.query(sql, (err, result) => {
