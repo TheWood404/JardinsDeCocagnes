@@ -19,9 +19,9 @@ const ConnexionAdherent = ({ setUtilisateurConnecte }) => {
         console.log("setUtilisateurConnecte:", setUtilisateurConnecte); // Ajoutez cette ligne
         setUtilisateurConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
         //stocker l'id_structure de l'adhérent dans le local storage
-        localStorage.setItem('idStructureAD', response.data.structId);
+        localStorage.setItem('idStructureAdherent', response.data.structId);
         //concole log de l'id_structure de l'adhérent
-        console.log("idStructureAD:", response.data.structId);
+        console.log("idStructureAdherent:", response.data.structId);
         nav('/compte-adherent');
       } else {
         setConnexionReussie(false);

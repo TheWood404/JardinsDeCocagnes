@@ -10,7 +10,7 @@ const ConnexionResponsable = ({ setStructureConnecte }) => {
   const nav = useNavigate();
 
   const handleLoginClick = async () => {
-    try {
+    try { 
       const response = await axios.post('/api/connexionstructure', { id, num_identification: numId });
 
       if (response.data.success && response.data.userExists) {
@@ -18,9 +18,9 @@ const ConnexionResponsable = ({ setStructureConnecte }) => {
         console.log("setStructureConnecte:", setStructureConnecte); // Ajoutez cette ligne
         setStructureConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
         //stocker l'id de la structure dans le local storage
-        localStorage.setItem('idStructure', response.data.userId);
+        localStorage.setItem('idStructureResponsable', response.data.userId);
         //afficher dans la console l'id de la structure
-        console.log("idStructure:", response.data.userId);
+        console.log("idStructureResponsable:", response.data.userId);
         nav('/compte-structure');
       } else {
         setConnexionReussie(false);

@@ -15,7 +15,7 @@ function VisualisationAbonnement() {
 
   const fetchAbonnements = async () => {
     try {
-      const structureId = localStorage.getItem('idStructure');
+      const structureId = localStorage.getItem('idStructureResponsable');
       
       if (!structureId) {
         console.error('ID de structure non spécifié dans le localStorage');
@@ -33,6 +33,8 @@ function VisualisationAbonnement() {
       console.error("Erreur lors de la récupération des abonnements :", error);
     }
   };
+  
+  
   
 
   const handleModifierAbonnement = (abonnement) => {
