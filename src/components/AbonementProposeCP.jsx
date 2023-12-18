@@ -7,24 +7,27 @@ function AbonnementsPropose() {
   const [abonnements, setAbonnements] = useState([]);
 
   useEffect(() => {
-    const fetchAbonnements = async () => {
-      try {
-        const idStructureAD = localStorage.getItem('idStructureAD');
-
-        if (!idStructureAD) {
-          console.error("Id de structure non spécifié dans le localStorage");
-          return;
-        }
-
-        // Récupérer les abonnements de la structure de l'adhérent
-        const responseAbonnements = await axios.get(`/api/abonnements/${idStructureAD}`);
-
-        // Mettre à jour l'état des abonnements
-        setAbonnements(responseAbonnements.data.abonnements);
-      } catch (error) {
-        console.error('Erreur lors de la récupération de la structure ou des abonnements :', error);
+    
+  const fetchAbonnements = async () => {
+    try {
+      const structureId = localStorage.getItem('idStructureAdherent');
+      
+      if (!structureId) {
+        console.error('ID de structure non spécifié dans le localStorage');
+        return;
       }
-    };
+  
+      const response = await axios.get("/api/abonnements", {
+        params: {
+          structureId: structureId,
+        },
+      });
+  
+      setAbonnements(response.data.abonnements);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des abonnements :", error);
+    }
+  };
 
     fetchAbonnements();
   }, []);

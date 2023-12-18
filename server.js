@@ -177,10 +177,16 @@ app.post('/api/addabonnements', (req, res) => {
   });
 });
 
-// Endpoint pour récupérer tous les abonnements
+// Endpoint pour récupérer les abonnements en fonction de la structure définie
 app.get('/api/abonnements', (req, res) => {
-  const sql = 'SELECT * FROM abonnement'; // Assurez-vous que le nom de la table correspond à votre base de données
-  db.query(sql, (err, result) => {
+  const structureId = req.query.structureId;
+
+  if (!structureId) {
+    return res.status(400).json({ success: false, message: 'ID de structure non spécifié' });
+  }
+
+  const sql = 'SELECT * FROM abonnement WHERE structure = ?';
+  db.query(sql, [structureId], (err, result) => {
     if (err) {
       console.error('Erreur lors de la récupération des abonnements :', err);
       return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
