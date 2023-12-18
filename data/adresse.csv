@@ -1,0 +1,92 @@
+id,nom,adresse,code_postal,ville,latitude
+1,PointDepot1,11 rue de l'Universite,88100,Saint-Die-des-Vosges,48.289991
+2,PointDepot2,1 place Georges Phelipeaux,88470,Saint-Michel-sur-Meurthe,48.316883
+3,PointDepot3,2 Champ de Foire,88480,Etival-Clairefontaine,48.3655338
+4,PointDepot4,32 rue Jules Ferry,88110,Raon-l'Etape,48.407098
+5,PointDepot5,16 avenue de Lachapelle,54120,Baccarat,48.4456873
+6,PointDepot6,7 rue Saint-pierre,54122,Fontenoy-la-Joute,48.4553319
+7,PointDepot7,6 rue du College,88700,Roville-aux-Chenes,48.386134
+8,PointDepot8,11 rue des 4 Freres Bonlarron,88700,Rambervillers,48.3443294
+9,PointDepot9,14 chemin de la Bodiére,88700,Jeanmenil,48.3300812
+10,PointDepot10,50 rue de la Colline des Eaux,88700,Jeanmenil,48.3249126
+11,PointDepot11,99 chemin de la Grande Haie,88470,Nompatelize,48.3137622
+12,PointDepot12,32 rue de l'Orme,88100,Saint-Die-des-Vosges,48.300186
+13,PointDepot13,1546 Grand Rue,88470,La Voivre,48.3389287
+14,PointDepot14,5 rue de l'Hotel de Ville,88420,Moyenmoutier,48.3791975
+15,PointDepot15,10 place Charles Thumann,88210,Senones,48.3955873
+16,PointDepot16,1 Château de Belval,88210,Le Saulcy,48.4103396
+17,PointDepot17,20 rue Principale,67420,Saint-Blaise-la-Roche,48.404395
+18,PointDepot18,750 route de Strasbourg dvt Fouday,67130,Plaine,48.4236161
+19,PointDepot19,26 rue de Senones,67420,Saales,48.3488056
+20,PointDepot20,5 rue des Filatures,88490,Provencheres-et-Colroy,48.3075311
+21,PointDepot21,1620 chemin des Goutys,88100,Nayemont-les-Fosses,48.284752
+22,PointDepot22,44 allee des Sports,88100,Sainte-Marguerite,48.2682289
+23,PointDepot23,27 rue d'Hellieule,88100,Saint-Die-des-Vosges,48.284985
+24,PointDepot24,19 chemin de l'Épine,88100,Taintrux,48.2494589
+25,PointDepot25,416 Rue James Wiese,88430,Corcieux,48.1687592
+26,PointDepot26,32 bd. d'Alsace,88400,Gerardmer,48.073341
+27,PointDepot27,1bis rue Charles de Gaulle,88530,Le Tholy,48.0826676
+28,PointDepot28,7 place Paul Caritey,88120,Vagney,48.0084336
+29,PointDepot29,6 rue Charlet,88200,Saint-Etienne-les-Remiremont,48.0090978
+30,PointDepot30,5 rue de Turenne,88200,Saint-Nabord,48.0560048
+31,PointDepot31,18bis rue de la Prairie,88460,Chenimenil,48.1385894
+32,PointDepot32,19 rue de l'Hopital,88600,Bruyeres,48.2067531
+33,PointDepot33,14 Rue de l'Hotel de Ville,88600,Brouvelieures,48.2367614
+34,PointDepot34,34 rue du Nouvel-Hopital,88100,Saint-Die-des-Vosges,48.289635
+35,PointDepot35,12 Route de Raves,88100,Neuvillers-sur-Fave,48.2784075
+36,PointDepot36,7 place Eugene Grandjean,88520,Ban-de-Laveline,48.245516
+37,PointDepot37,12 rue du pont de la Forge,88230,Fraize,48.1862996
+38,PointDepot38,84 rue du General Dufieux,68650,Lapoutroie,48.156157
+39,PointDepot39,84 rue Charles de Gaulle,68370,Orbey,48.1253989
+40,PointDepot40,396 La Place,68910,Labaroche,48.1048506
+41,PointDepot41,1 rue du Couvent,68140,Munster,48.0399264
+42,PointDepot42,534 rue de la Resistance,88400,Xonrupt-Longemer,48.0789757
+43,PointDepot43,617 Le Vic,88230,Ban-sur-Meurthe-Clefcy,48.1461803
+44,PointDepot44,144 voie du Moulin,88230,Ban-sur-Meurthe-Clefcy,48.1749859
+45,PointDepot45,287 rue de Lorraine,88650,Saint-Leonard,48.2184733
+46,PointDepot46,31 rue de Moulins sur Allier,88580,Saulcy-sur-Meurthe,48.2361785
+47,PointDepot47,14 rue Pasteur,88100,Saint-Die-des-Vosges,48.28236
+48,PointDepot48,9 route du Neune,88430,Gerbepal,48.1500205
+49,PointDepot49,18 rue de l'eglise,88250,La Bresse,48.0047487
+50,PointDepot50,129 rue de Basinroche,88290,Saulxures-sur-Moselotte,47.949067
+51,PointDepot51,2bis rue de Genazeville,88640,Granges-Aumontzey,48.1438775
+52,PointDepot52,27 rue Philippe Seguin,88000,Epinal,48.193882
+53,PointDepot53,12 Quartier de la Magdeleine,88000,Epinal,48.1873721
+54,PointDepot54,5 rue du Ruisseau,88150,Thaon-les-Vosges,48.2571855
+55,PointDepot55,3 rue du Moulin,88440,Nomexy,48.3082831
+56,PointDepot56,12 rue du General Leclerc,88130,Charmes,48.3719687
+57,PointDepot57,5 rue des Hauts Fosses,54290,Bayon,48.4764774
+58,PointDepot58,1 rue Maurice Barres,54830,Gerbéviller,48.4949554
+59,PointDepot59,2 rue Gambetta,54540,Badonviller,48.4978938
+60,PointDepot60,Place de la Gare,88110,Celles-sur-Plaine,48.4553043
+61,PointDepot61,6 Grande Rue,88110,Luvigny,48.5003296
+62,PointDepot62,49 rue du General de Gaulle,67130,La Broque,48.4729303
+63,PointDepot63,4 Chemin de la Prelle,88210,Ban-de-Sapt,48.340465
+64,PointDepot64,12 Le Village,88210,Hurbache,48.3499447
+65,PointDepot65,12 rue Armand Colle,88000,Epinal,48.1604568
+66,PointDepot66,15 rue General de Reffye,88000,Epinal,48.1819469
+67,PointDepot67,6 avenue Salvador Allende,88000,Epinal,48.1938105
+68,PointDepot68,rue de la papeterie,88000,Dinoze,48.1383687
+69,PointDepot69,36 bis rue de la Plaine,88190,Golbey,48.1929337
+70,PointDepot70,avenue des Terres St Jean,88190,Golbey,48.1891998
+71,PointDepot71,17 rue Andre Vitu,88000,Epinal,48.1775685
+72,PointDepot72,24 rue du Gal de Gaulle,88200,St Nabord,48.0510352
+73,PointDepot73,26 rue de la Joncherie,88200,Remiremont,48.0189339
+74,PointDepot74,6 Place C. Poncelet,88200,Remiremont,48.0159918
+75,PointDepot75,7 Rue du Savron,88220,Raon-aux-Bois,48.0504027
+76,PointDepot76,1 rue Moncey,88460,Docelles,48.1460719
+77,PointDepot77,Prairie Claudel,88150,Thaon-les-Vosges,48.2531016
+78,PointDepot78,15 rue Ste Barbe,88130,Charmes,48.3777043
+79,PointDepot79,15 rue du Marechal Lyautey,88000,Epinal,48.177777
+80,PointDepot80,Zac Barbazan,88600,Bruyeres,48.2032056
+81,PointDepot81,2 rue de Fraisne,88600,Bruyeres,48.2050495
+82,PointDepot82,45 boulevard d'Alsace,88400,Gerardmer,48.0738404
+83,PointDepot83,24 route du Noirpre,88530,Le Tholy,48.0812967
+84,PointDepot84,19 chemin des Muats - Rte de Chambles,42170,Saint-Just-Saint-Rambert,45.4945016
+85,PointDepot85,Europarc de la haute borne,59650,Villeneuve-d'Ascq,50.6006992
+86,PointDepot86,13 allee de Coyol,87270,Couzeix,45.8779711
+87,PointDepot87,85 Route de Sept-Fons - Abbaye de Sept Fons,3290,Diou,46.5434267
+88,PointDepot88,Le moulin de la Gourberte - Beau Rivage - Saint Andre de la Marche,49450,Sevremoine,47.0903783
+89,PointDepot89,chemin de Reg,49450,Sevremoine,ST_GeomFromText('POINT(47.0903783 -1.0305009)')
+89,PointDepot89,chemin de Regleille,66130,Ille-sur-Tet,ST_GeomFromText('POINT(42.6800543 2.619328)')
+90,PointDepot90,9 rue de la Louviere,88000,Epinal,ST_GeomFromText('POINT(48.1723212 6.4531588)')

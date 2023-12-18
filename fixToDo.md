@@ -1,0 +1,3 @@
+- [ ] Responsive Logo page d'accueil
+- [ ] Responsive inscription structure
+- [ ] Logo recharger page en haut a gauche
