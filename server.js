@@ -88,6 +88,46 @@ app.post('/api/connexionstructure', (req, res) => {
   });
 });
 
+app.post('/api/registerstructure', (req, res) => {
+  const { nom_commercial, ville, raison_sociale, siege_social, adresse_de_gestion, coordonnees_commerciales, num_identification } = req.body;
+
+  // Vérification si le num_identification existe dans la table num_structure et est libre (isCreate = 0)
+  const sqlCheckStructure = 'SELECT * FROM num_structure WHERE num_identification = ? AND isCreate = 0';
+  db.query(sqlCheckStructure, [num_identification], (err, structureResult) => {
+    if (err) {
+      console.error('Erreur lors de la vérification de la structure :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    if (structureResult.length > 0) {
+      // Le num_identification existe dans la table num_structure et est libre
+      const sqlInsert = 'INSERT INTO structure (nom_commercial, ville, raison_sociale, siege_social, adresse_de_gestion, coordonnees_commerciales, num_identification) VALUES (?, ?, ?, ?, ?, ?, ?)';
+      db.query(sqlInsert, [nom_commercial, ville, raison_sociale, siege_social, adresse_de_gestion, coordonnees_commerciales, num_identification], (err, insertResult) => {
+        if (err) {
+          console.error('Erreur lors de l\'INSERT dans la table structure :', err);
+          return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+        }
+        
+        // Mise à jour de isCreate à 1 pour le num_identification
+        const sqlUpdateIsCreate = 'UPDATE num_structure SET isCreate = 1 WHERE num_identification = ?';
+        db.query(sqlUpdateIsCreate, [num_identification], (err, updateResult) => {
+          if (err) {
+            console.error('Erreur lors de la mise à jour de isCreate :', err);
+            return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+          }
+          
+          return res.json({ success: true, message: 'Insertion réussie et isCreate mis à jour' });
+        });
+      });
+    } else {
+      // Le num_identification n'existe pas dans la table num_structure ou n'est pas libre
+      return res.json({ success: false, message: 'Le numéro d\'identification n\'est pas valide ou est déjà inscrit' });
+    }
+  });
+});
+
+
+
 
 
 app.listen(port, () => {
