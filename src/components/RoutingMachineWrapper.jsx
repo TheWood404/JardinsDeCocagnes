@@ -9,7 +9,7 @@ const RoutingMachineWrapper = ({ waypoints }) => {
   let control = null; // Ajout d'une référence pour stocker le contrôle de routage
 
   useEffect(() => {
-    if (map && waypoints.length >= 2) {
+    if (map && waypoints.length === 2) {
       // Créez le contrôle de routage et ajoutez-le à la carte
       control = L.Routing.control({
         waypoints: waypoints,

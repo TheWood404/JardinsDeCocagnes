@@ -43,6 +43,9 @@ const TourneesMap = () => {
   }, []);
 
   useEffect(() => {
+    console.log('mapRef.current:', mapRef.current);
+    console.log('routingControl:', routingControl);
+    console.log('selectedDepots use effect:', selectedDepots);
     if (mapRef.current && selectedDepots.length === 2 && !routingControl) {
       console.log('Creating Routing Control...');
       const waypoints = selectedDepots.map((index) => {
@@ -75,10 +78,11 @@ const TourneesMap = () => {
       if (prevSelectedDepots.includes(index)) {
         return prevSelectedDepots.filter((i) => i !== index);
       } else {
-        return [...prevSelectedDepots, index];
+        return [...prevSelectedDepots.slice(-1), index];
       }
     });
   };
+  
 
   return (
     <>
@@ -103,7 +107,11 @@ const TourneesMap = () => {
             <Marker
               key={index}
               position={[coordonnee.longitude, coordonnee.latitude]}
-              onClick={() => handleMarkerClick(index)}
+              eventHandlers={{
+                click: (e) => {
+                  handleMarkerClick(index);
+                },
+              }}
             >
               <Popup>
                 <p>Depot {index + 1}</p>
@@ -113,7 +121,7 @@ const TourneesMap = () => {
             </Marker>
           ))}
 
-          {console.log('Selected depots:', selectedDepots)}
+          {console.log('Selected depots 1:', selectedDepots)}
           {console.log('Rendering RoutingMachineWrapper')}
           {selectedDepots.length === 2 && !routingControl && (
             <RoutingMachineWrapper waypoints={selectedDepots.map((index) => {
