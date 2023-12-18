@@ -37,14 +37,40 @@ db.connect(err => {
 
 app.post('/api/connexion', (req, res) => {
   const { mail, mdp_espace_client } = req.body;
-  const sql = 'SELECT COUNT(*) AS count FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
+  const sql = 'SELECT COUNT(*) AS count, id_structure FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
   db.query(sql, [mail, mdp_espace_client], (err, result) => {
     if (err) {
       console.error('Erreur lors de la vérification de la connexion :', err);
       return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
     }
     const userExists = result[0].count > 0;
-    return res.json({ success: true, userExists });
+
+    if (userExists) {
+      const structId = result[0].id_structure;
+      return res.json({ success: true, userExists, structId });
+    } else {
+      return res.json({ success: false, userExists, structId: null });
+    }
+  });
+});
+
+app.post('/api/connexionstructure', (req, res) => {
+  const { id, num_identification } = req.body;
+  const sql = 'SELECT * FROM structure WHERE id = ? AND num_identification = ?';
+  db.query(sql, [id, num_identification], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la vérification de la connexion :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    
+    const userExists = result.length > 0; // Vérifiez si des résultats ont été renvoyés
+
+    if (userExists) {
+      const userId = result[0].id; // Supposons que l'ID de l'utilisateur est stocké dans une colonne "id"
+      return res.json({ success: true, userExists, userId });
+    } else {
+      return res.json({ success: true, userExists });
+    }
   });
 });
 
@@ -71,21 +97,6 @@ app.get('/api/coordonneespointdedepot', (req, res) => {
     return res.json({ success: true, coordonnees: result });
   }
   );
-});
-
-app.post('/api/connexionstructure', (req, res) => {
-  const { id, num_identification } = req.body;
-  const sql = 'SELECT * FROM structure WHERE id = ? AND num_identification = ?';
-  db.query(sql, [id, num_identification], (err, result) => {
-    if (err) {
-      console.error('Erreur lors de la vérification de la connexion :', err);
-      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
-    }
-    
-    const userExists = result.length > 0; // Vérifiez si des résultats ont été renvoyés
-
-    return res.json({ success: true, userExists });
-  });
 });
 
 app.post('/api/registerstructure', (req, res) => {
@@ -128,6 +139,122 @@ app.post('/api/registerstructure', (req, res) => {
 
 
 
+//pour la création des abonnements des structures
+
+//récupère la liste des produits dans la base de données
+app.get('/api/produits', (req, res) => {
+  const sql = 'SELECT * FROM produit';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des produits :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    return res.json({ success: true, produits: result });
+  }
+  );
+});
+
+//enregistre un abonnement dans la base de données depuis le formulaire
+// Endpoint pour ajouter un abonnement
+app.post('/api/addabonnements', (req, res) => {
+  const { type, montant, compositions, structureId } = req.body;
+
+  // Vérifiez si les données requises sont présentes
+  if (!type || !montant || !compositions || !structureId) {
+    return res.status(400).json({ success: false, message: 'Veuillez fournir toutes les informations nécessaires.' });
+  }
+
+  // Logique pour ajouter l'abonnement à la base de données
+  const sql = 'INSERT INTO abonnement (type, montant, compositions, structure) VALUES (?, ?, ?, ?)';
+  db.query(sql, [type, montant, compositions, structureId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de l\'ajout de l\'abonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    // Retournez une réponse réussie
+    return res.json({ success: true, message: 'Abonnement ajouté avec succès' });
+  });
+});
+
+// Endpoint pour récupérer tous les abonnements
+app.get('/api/abonnements', (req, res) => {
+  const sql = 'SELECT * FROM abonnement'; // Assurez-vous que le nom de la table correspond à votre base de données
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des abonnements :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, abonnements: result });
+  });
+});
+
+//endpoint pour modifier l'abonnement spécifié par l'id
+app.put('/api/editabonnements/:id', (req, res) => {
+  const { id } = req.params;
+  const { type, montant } = req.body;
+
+  //console log id et type pour vérifier qu'ils sont bien récupérés
+  console.log(id);
+  console.log(type);
+  console.log(montant);
+
+  const sql = 'UPDATE abonnement SET type=?, montant=? WHERE id=?';
+
+  db.query(sql, [type, montant, id], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la mise à jour de l\'abonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Abonnement mis à jour avec succès' });
+  });
+});
+
+// Endpoint pour supprimer un abonnement
+app.delete('/api/abonnements/:id', (req, res) => {
+  const { id } = req.params;
+
+  const sql = 'DELETE FROM abonnement WHERE id=?';
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la suppression de l\'abonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Abonnement supprimé avec succès' });
+  });
+});
+
+// Endpoint pour récupérer les abonnements en fonction de l'ID de structure
+app.get('/api/abonnements/:idStructure', (req, res) => {
+  const { idStructure } = req.params;
+
+  // Utilisez l'ID de structure dans votre requête SQL pour récupérer les abonnements
+  const sql = 'SELECT * FROM abonnement WHERE structure = ?';
+  db.query(sql, [idStructure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des abonnements :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, abonnements: result });
+  });
+});
+
+
+app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
+  const { idStructure } = req.params;
+  const sql = 'SELECT * FROM abonnement WHERE structure = ?';
+  db.query(sql, [idStructure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des abonnements de la structure de l\'adhérent :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+    return res.json({ success: true, abonnements: result });
+  });
+});
 
 
 app.listen(port, () => {

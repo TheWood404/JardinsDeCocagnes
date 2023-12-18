@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from 'axios'; 
 
 const ConnexionAdherent = ({ setUtilisateurConnecte }) => {
+
   const [mail, setMail] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [connexionReussie, setConnexionReussie] = useState(null);
   const nav = useNavigate();
 
+
   const handleClickLogin = async () => {
-    try {
+    try { 
       const response = await axios.post('/api/connexion', { mail, mdp_espace_client: motDePasse });
   
       if (response.data.success && response.data.userExists) {
         setConnexionReussie(true);
+        console.log("setUtilisateurConnecte:", setUtilisateurConnecte); // Ajoutez cette ligne
         setUtilisateurConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
+        //stocker l'id_structure de l'adhérent dans le local storage
+        localStorage.setItem('idStructureAD', response.data.structId);
+        //concole log de l'id_structure de l'adhérent
+        console.log("idStructureAD:", response.data.structId);
         nav('/compte-adherent');
       } else {
         setConnexionReussie(false);

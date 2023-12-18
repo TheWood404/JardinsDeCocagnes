@@ -1,5 +1,7 @@
 import React from 'react';
 import Header from '../../components/Header'; // Importez le composant Header
+import GestionAbonnement from '../../components/GestionAbonnementCP';
+import VisualisationAbonnement from '../../components/VisualisationAbonnementCP';
 
 
 function Abonnement() {
@@ -7,8 +9,16 @@ function Abonnement() {
     <div>
       <Header afficherHeader={true} />
 
-      <h1>Abonnement</h1>
-      {/* Ajoutez le contenu spécifique à cet écran ici */}
+      <div className="flex justify-center mt-10">
+  <div className="w-1/2 pr-4">
+    <GestionAbonnement />
+  </div>
+  <div className="w-1/2 pl-4">
+    <VisualisationAbonnement />
+  </div>
+</div>
+
+
     </div>
   );
 }

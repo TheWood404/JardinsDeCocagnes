@@ -2,17 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const ConnexionResponsable = () => {
+const ConnexionResponsable = ({ setStructureConnecte }) => {
 
   const [id, setID] = useState('');
   const [numId, setNumId] = useState('');
   const [connexionReussie, setConnexionReussie] = useState(null);
   const nav = useNavigate();
-
-  const handleRegisterClick = () => {
-    // Naviguez vers la page correspondante au clic sur "Ma structure n'est pas enregistré"
-    nav('/structure-register'); 
-  }
 
   const handleLoginClick = async () => {
     try {
@@ -20,6 +15,12 @@ const ConnexionResponsable = () => {
 
       if (response.data.success && response.data.userExists) {
         setConnexionReussie(true);
+        console.log("setStructureConnecte:", setStructureConnecte); // Ajoutez cette ligne
+        setStructureConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
+        //stocker l'id de la structure dans le local storage
+        localStorage.setItem('idStructure', response.data.userId);
+        //afficher dans la console l'id de la structure
+        console.log("idStructure:", response.data.userId);
         nav('/compte-structure');
       } else {
         setConnexionReussie(false);
@@ -28,7 +29,12 @@ const ConnexionResponsable = () => {
       console.error('Erreur lors de la connexion :', error);
       setConnexionReussie(false);
     } 
-  }
+  };
+
+  const handleRegisterClick = () => {
+    // Naviguez vers la page correspondante au clic sur "Ma structure n'est pas enregistré"
+    nav('/structure-register'); 
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
