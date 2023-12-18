@@ -9,16 +9,17 @@ function GestionAbonnement() {
   const [produits, setProduits] = useState([]);
   const [typeProduit, setTypeProduit] = useState("");
   const [produitsSelectionnes, setProduitsSelectionnes] = useState([]);
-  const [structureId, setStructureId] = useState(localStorage.getItem('idStructure'));
+  const [structureId, setStructure] = useState(localStorage.getItem('idStructureResponsable'));
   const [enregistrementReussi, setEnregistrementReussi] = useState(false); // Nouvel état
   const [enregistrementEchoue, setEnregistrementEchoue] = useState(false); // Nouvel état
 
   const handleMontantChange = (e) => {
     const inputValue = e.target.value;
-    if (/^[1-9]\d{0,2}$|^1000$/.test(inputValue) || inputValue === '') {
+    if (/^\d{1,3}(?:\.\d{0,2})?$|^1000$/.test(inputValue) || inputValue === '') {
       setMontant(inputValue);
     }
   };
+  
 
   useEffect(() => {
     const fetchProduits = async () => {
