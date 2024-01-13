@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPagelines } from '@fortawesome/free-brands-svg-icons';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'; // Icônes pour le menu burger
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+
 
 const Header = ({ afficherHeader }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,13 +14,27 @@ const Header = ({ afficherHeader }) => {
     setMenuOpen(!menuOpen);
   };
 
+  const [structureConnecte, setStructureConnecte] = useState(false);
+  const navigate = useNavigate(); // Déplacez useNavigate ici
+
+  const HandleClickLogout = async () => {
+    localStorage.setItem('structureConnecte', 'false');
+    console.log("StructureConnecte:", localStorage.getItem('structureConnecte'));
+
+    // Mettre à jour l'état utilisateurConnecte dans votre application
+    setStructureConnecte(false);
+
+    await navigate('/'); // Utilisez le hook navigate à l'intérieur de votre fonction
+  };
+  
+
   return (
     afficherHeader && (
       <header className="bg-white text-green-title p-4 flex justify-between items-center">
         <div>
-          <a href="/">
+          <Link to="/compte-structure">
             <img src='../images/CocagneLogo.png' width='150' height='100' alt='Logo des Jardins de Cocagnes' />
-          </a>
+          </Link>
         </div>
         <nav className="hidden md:flex items-center">
           <div className="flex">
@@ -32,6 +49,12 @@ const Header = ({ afficherHeader }) => {
               <FontAwesomeIcon icon={faPagelines} size="2xl" style={{ color: "#ffffff" }} />
             </Link>
           </div>
+          <button
+            className="bg-red-500 rounded-full ml-4 p-4 w-14 h-14 transform flex items-center justify-center text-center"
+            onClick={HandleClickLogout}
+          >
+            <FontAwesomeIcon icon={faSignOutAlt} size="2xl" style={{ color: "#ffffff" }} />
+          </button>
         </nav>
         <div className="md:hidden">
           <button onClick={toggleMenu}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import PointDeDepot from './screens/Structure/pointDeDepotStructureSC';
 import Produits from './screens/Structure/produitsStructureSC';
@@ -17,8 +17,6 @@ import ProduitsAD from './screens/Adherent/produitsAdherentSC';
 import AbonnementAD from './screens/Adherent/abonnementAdherentSC';
 import CalendrierAD from './screens/Adherent/calendrierAdherentSC';
 
-import { useState } from 'react';
-
 function App() {
   const divStyle = {
     backgroundImage: `url(${backgroundImage})`,
@@ -28,8 +26,17 @@ function App() {
     minHeight: '100vh',
   };
 
-  const [utilisateurConnecte, setUtilisateurConnecte] = useState(null);
-  const [structureConnecte, setStructureConnecte] = useState(null);
+  const [utilisateurConnecte, setUtilisateurConnecte] = useState(
+    localStorage.getItem('utilisateurConnecte') === 'true'
+  );
+  const [structureConnecte, setStructureConnecte] = useState(
+    localStorage.getItem('structureConnecte') === 'true'
+  );
+
+  useEffect(() => {
+    localStorage.setItem('utilisateurConnecte', utilisateurConnecte);
+    localStorage.setItem('structureConnecte', structureConnecte);
+  }, [utilisateurConnecte, structureConnecte]);
 
   return (
     <Router>
@@ -77,7 +84,6 @@ function App() {
           } />
 
           <Route path="*" element={<Navigate to="/" />} />
-
         </Routes>
       </div>
     </Router>

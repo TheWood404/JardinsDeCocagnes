@@ -4,6 +4,10 @@ import axios from 'axios';
 
 const ConnexionResponsable = ({ setStructureConnecte }) => {
 
+  //mettre a jour l'etat de l'utilisateur connecté dans le local storage comme false
+  localStorage.setItem('structureConnecte', 'false');
+  console.log("structureConnecte:", localStorage.getItem('structureConnecte'));
+
   const [id, setID] = useState('');
   const [numId, setNumId] = useState('');
   const [connexionReussie, setConnexionReussie] = useState(null);
@@ -15,6 +19,10 @@ const ConnexionResponsable = ({ setStructureConnecte }) => {
 
       if (response.data.success && response.data.userExists) {
         setConnexionReussie(true);
+
+        // Mettez à jour l'état de l'utilisateur connecté dans le localStorage
+       
+
         console.log("setStructureConnecte:", setStructureConnecte); // Ajoutez cette ligne
         setStructureConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
         //stocker l'id de la structure dans le local storage

@@ -20,6 +20,8 @@ const ConnexionAdherent = ({ setUtilisateurConnecte }) => {
         setUtilisateurConnecte(true); // Mettez à jour l'état de l'utilisateur connecté
         //stocker l'id_structure de l'adhérent dans le local storage
         localStorage.setItem('idStructureAdherent', response.data.structId);
+
+   
         //concole log de l'id_structure de l'adhérent
         console.log("idStructureAdherent:", response.data.structId);
         nav('/compte-adherent');
