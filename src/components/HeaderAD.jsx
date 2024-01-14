@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faUser } from '@fortawesome/free-solid-svg-icons'; // Icônes pour le menu burger
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 
 const HeaderAD = ({ afficherHeader }) => {

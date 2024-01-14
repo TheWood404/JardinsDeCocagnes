@@ -85,7 +85,7 @@ db.connect(err => {
  */
 app.post('/api/connexion', (req, res) => {
   const { mail, mdp_espace_client } = req.body;
-  const sql = 'SELECT COUNT(*) AS count, id_structure FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
+  const sql = 'SELECT COUNT(*) AS count, id_structure, id FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
   db.query(sql, [mail, mdp_espace_client], (err, result) => {
     if (err) {
       console.error('Erreur lors de la vérification de la connexion :', err);
@@ -95,7 +95,8 @@ app.post('/api/connexion', (req, res) => {
 
     if (userExists) {
       const structId = result[0].id_structure;
-      return res.json({ success: true, userExists, structId });
+      const userId = result[0].id;
+      return res.json({ success: true, userExists, structId, userId });
     } else {
       return res.json({ success: false, userExists, structId: null });
     }
@@ -734,6 +735,169 @@ app.get('/api/abonnements/:idStructure', (req, res) => {
     return res.json({ success: true, abonnements: result });
   });
 });
+
+app.post('/api/souscrire-abonnement', (req, res) => {
+  const { idAdherent, idAbonnement } = req.body;
+
+  // Vérifier si l'adhérent et l'abonnement existent
+  // (ajouter les vérifications nécessaires ici)
+
+  const dateDebut = new Date(); // La date de début est la date actuelle
+  //la date de fin est la date de début + 1 mois
+  const dateFin = new Date(dateDebut.getFullYear(), dateDebut.getMonth() + 1, dateDebut.getDate());
+
+  const sql = 'INSERT INTO abonnements_en_cours (id_adherent, id_abonnement, date_debut, date_fin) VALUES (?, ?, ?, ?)';
+  db.query(sql, [idAdherent, idAbonnement, dateDebut, dateFin], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la souscription à l\'abonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Souscription réussie' });
+  });
+});
+
+app.get('/api/abonnements-en-cours', (req, res) => {
+  const idAdherent = req.query.idAdherent;
+
+  if (!idAdherent) {
+    return res.status(400).json({ success: false, message: 'ID de l\'adhérent non spécifié' });
+  }
+
+  const sql = 'SELECT * FROM abonnements_en_cours WHERE id_adherent = ?';
+  db.query(sql, [idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des abonnements en cours :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, abonnementsEnCours: result });
+  });
+});
+
+app.post('/api/desabonner', (req, res) => {
+  const idAdherent = req.body.idAdherent;
+  const idAbonnement = req.body.idAbonnement;
+
+  if (!idAdherent || !idAbonnement) {
+    return res.status(400).json({ success: false, message: 'ID d\'adhérent ou ID d\'abonnement non spécifié' });
+  }
+
+  const sql = 'DELETE FROM abonnements_en_cours WHERE id_adherent = ? AND id_abonnement = ?';
+  db.query(sql, [idAdherent, idAbonnement], (err, result) => {
+
+    if (err) {
+      console.error('Erreur lors du désabonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Désabonnement réussi' });
+  });
+});
+
+// Fonction pour formater les résultats de la requête SQL
+function formatAdherentsWithAbonnements(rawData) {
+  const formattedAdherents = [];
+
+  rawData.forEach(row => {
+    const existingAdherent = formattedAdherents.find(adherent => adherent.id === row.id);
+
+    if (existingAdherent) {
+      // Si l'adhérent existe déjà, ajouter l'abonnement en cours
+      existingAdherent.abonnementsEnCours.push({
+        id: row.id_abonnement,
+        date_debut: row.date_debut,
+        date_fin: row.date_fin
+      });
+    } else {
+      // Si l'adhérent n'existe pas, le créer avec son premier abonnement en cours
+      const newAdherent = {
+        id: row.id,
+        nom: row.nom,
+        prenom: row.prenom,
+        adresse: row.adresse,
+        code_postal: row.code_postal,
+        mail: row.mail,
+        num_identification: row.num_identification,
+        num_telephone: row.num_telephone,
+        ville: row.ville,
+        abonnementsEnCours: row.id_abonnement
+          ? [{
+              id: row.id_abonnement,
+              date_debut: row.date_debut,
+              date_fin: row.date_fin
+            }]
+          : []
+      };
+
+      formattedAdherents.push(newAdherent);
+    }
+  });
+
+  return formattedAdherents;
+}
+
+
+app.get('/api/adherents-de-structure', (req, res) => {
+  const idStructure = req.query.idStructure;
+
+  if (!idStructure) {
+    return res.status(400).json({ success: false, message: 'ID de structure non spécifié' });
+  }
+
+  const sql = `
+    SELECT adherent.*, abonnements_en_cours.*
+    FROM adherent
+    LEFT JOIN abonnements_en_cours ON adherent.id = abonnements_en_cours.id_adherent
+    WHERE adherent.id_structure = ?
+  `;
+
+  db.query(sql, [idStructure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des adhérents de la structure :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    const formattedResult = formatAdherentsWithAbonnements(result);
+    return res.json({ success: true, adherents: formattedResult });
+  });
+});
+
+//endpoints qui récupère les informations de l'abonnements en fonction de sont id
+// Exemple avec Express.js
+app.get('/api/abonnement/:idAbonnement', (req, res) => {
+  const idAbonnementEnCours = req.params.idAbonnement;
+
+  if (!idAbonnementEnCours) {
+    return res.status(400).json({ success: false, message: 'ID de l\'abonnement en cours non spécifié' });
+  }
+
+  const sql = `
+    SELECT abonnements_en_cours.id_abonnement, abonnement.*
+    FROM abonnements_en_cours
+    LEFT JOIN abonnement ON abonnements_en_cours.id_abonnement = abonnement.id
+    WHERE abonnements_en_cours.id = ?;
+  `;
+
+  db.query(sql, [idAbonnementEnCours], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des informations de l\'abonnement en cours :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: 'Abonnement en cours non trouvé' });
+    }
+
+    return res.json({ success: true, abonnement: result[0] });
+  });
+});
+
+
+ 
+
+
+
 
 /**
  * @swagger
