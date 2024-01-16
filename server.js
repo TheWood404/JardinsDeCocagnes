@@ -4,6 +4,11 @@ const mysql = require('mysql');
 const cors = require('cors');
 const child_process = require('child_process');
 
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerConfig = require('./swaggerConfig'); // Mettez à jour le chemin selon votre structure
+
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -35,9 +40,52 @@ db.connect(err => {
   }
 });
 
+/**
+ * @swagger
+ * /api/connexion:
+ *   post:
+ *     summary: Connexion à l'API
+ *     description: Vérifie les informations de connexion et renvoie le résultat.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mail:
+ *                 type: string
+ *               mdp_espace_client:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Succès de la connexion
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 userExists:
+ *                   type: boolean
+ *                 structId:
+ *                   type: number
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/connexion', (req, res) => {
   const { mail, mdp_espace_client } = req.body;
-  const sql = 'SELECT COUNT(*) AS count, id_structure FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
+  const sql = 'SELECT COUNT(*) AS count, id_structure, id FROM adherent WHERE mail = ? AND mdp_espace_client = ?';
   db.query(sql, [mail, mdp_espace_client], (err, result) => {
     if (err) {
       console.error('Erreur lors de la vérification de la connexion :', err);
@@ -47,13 +95,57 @@ app.post('/api/connexion', (req, res) => {
 
     if (userExists) {
       const structId = result[0].id_structure;
-      return res.json({ success: true, userExists, structId });
+      const userId = result[0].id;
+      return res.json({ success: true, userExists, structId, userId });
     } else {
       return res.json({ success: false, userExists, structId: null });
     }
   });
 });
 
+/**
+ * @swagger
+ * /api/connexionstructure:
+ *   post:
+ *     summary: Connexion à la structure
+ *     description: Vérifie les informations de connexion de la structure et renvoie le résultat.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: number
+ *               num_identification:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Succès de la connexion
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 userExists:
+ *                   type: boolean
+ *                 userId:
+ *                   type: number
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/connexionstructure', (req, res) => {
   const { id, num_identification } = req.body;
   const sql = 'SELECT * FROM structure WHERE id = ? AND num_identification = ?';
@@ -74,6 +166,45 @@ app.post('/api/connexionstructure', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/deconnexion:
+ *   post:
+ *     summary: Déconnexion de l'adhérent
+ *     description: Vérifie les informations de déconnexion de l'adhérent et renvoie le résultat.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mail:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Succès de la déconnexion
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 userExists:
+ *                   type: boolean
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/deconnexion', (req, res) => {
   const { mail } = req.body;
   const sql = 'SELECT COUNT(*) AS count FROM adherent WHERE mail = ?';
@@ -87,6 +218,43 @@ app.post('/api/deconnexion', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/coordonneespointdedepot:
+ *   get:
+ *     summary: Récupération des coordonnées des points de dépôt
+ *     description: Récupère les coordonnées (longitude et latitude) des points de dépôt.
+ *     responses:
+ *       200:
+ *         description: Succès de la récupération des coordonnées
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 coordonnees:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       longitude:
+ *                         type: number
+ *                       latitude:
+ *                         type: number
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.get('/api/coordonneespointdedepot', (req, res) => {
   const sql = 'SELECT ST_X(coordonnees) AS longitude, ST_Y(coordonnees) AS latitude FROM point_de_depot';
   db.query(sql, (err, result) => {
@@ -99,6 +267,57 @@ app.get('/api/coordonneespointdedepot', (req, res) => {
   );
 });
 
+/**
+ * @swagger
+ * /api/registerstructure:
+ *   post:
+ *     summary: Enregistrement d'une nouvelle structure
+ *     description: Enregistre une nouvelle structure dans la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nom_commercial:
+ *                 type: string
+ *               ville:
+ *                 type: string
+ *               raison_sociale:
+ *                 type: string
+ *               siege_social:
+ *                 type: string
+ *               adresse_de_gestion:
+ *                 type: string
+ *               coordonnees_commerciales:
+ *                 type: string
+ *               num_identification:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Succès de l'enregistrement
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/registerstructure', (req, res) => {
   const { nom_commercial, ville, raison_sociale, siege_social, adresse_de_gestion, coordonnees_commerciales, num_identification } = req.body;
 
@@ -142,6 +361,40 @@ app.post('/api/registerstructure', (req, res) => {
 //pour la création des abonnements des structures
 
 //récupère la liste des produits dans la base de données
+/**
+ * @swagger
+ * /api/produits:
+ *   get:
+ *     summary: Récupération de la liste des produits
+ *     description: Récupère la liste complète des produits depuis la base de données.
+ *     responses:
+ *       200:
+ *         description: Succès de la récupération des produits
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 produits:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       // Propriétés spécifiques à chaque produit
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.get('/api/produits', (req, res) => {
   const sql = 'SELECT * FROM produit';
   db.query(sql, (err, result) => {
@@ -156,6 +409,62 @@ app.get('/api/produits', (req, res) => {
 
 //enregistre un abonnement dans la base de données depuis le formulaire
 // Endpoint pour ajouter un abonnement
+/**
+ * @swagger
+ * /api/addabonnements:
+ *   post:
+ *     summary: Ajout d'un nouvel abonnement
+ *     description: Ajoute un nouvel abonnement à la base de données.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *               montant:
+ *                 type: number
+ *               compositions:
+ *                 type: string
+ *               structureId:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Succès de l'ajout de l'abonnement
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Requête incorrecte
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.post('/api/addabonnements', (req, res) => {
   const { type, montant, compositions, structureId } = req.body;
 
@@ -178,6 +487,58 @@ app.post('/api/addabonnements', (req, res) => {
 });
 
 // Endpoint pour récupérer les abonnements en fonction de la structure définie
+/**
+ * @swagger
+ * /api/abonnements:
+ *   get:
+ *     summary: Récupération des abonnements en fonction de la structure
+ *     description: Récupère les abonnements associés à une structure spécifiée.
+ *     parameters:
+ *       - in: query
+ *         name: structureId
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: ID de la structure pour laquelle récupérer les abonnements.
+ *     responses:
+ *       200:
+ *         description: Succès de la récupération des abonnements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 abonnements:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       // Propriétés spécifiques à chaque abonnement
+ *       400:
+ *         description: Requête incorrecte
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.get('/api/abonnements', (req, res) => {
   const structureId = req.query.structureId;
 
@@ -197,6 +558,54 @@ app.get('/api/abonnements', (req, res) => {
 });
 
 //endpoint pour modifier l'abonnement spécifié par l'id
+/**
+ * @swagger
+ * /api/editabonnements/{id}:
+ *   put:
+ *     summary: Modification d'un abonnement
+ *     description: Modifie les détails d'un abonnement spécifié par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: ID de l'abonnement à modifier.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *               montant:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Succès de la mise à jour de l'abonnement
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.put('/api/editabonnements/:id', (req, res) => {
   const { id } = req.params;
   const { type, montant } = req.body;
@@ -219,6 +628,43 @@ app.put('/api/editabonnements/:id', (req, res) => {
 });
 
 // Endpoint pour supprimer un abonnement
+/**
+ * @swagger
+ * /api/abonnements/{id}:
+ *   delete:
+ *     summary: Suppression d'un abonnement
+ *     description: Supprime un abonnement spécifié par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: ID de l'abonnement à supprimer.
+ *     responses:
+ *       200:
+ *         description: Succès de la suppression de l'abonnement
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.delete('/api/abonnements/:id', (req, res) => {
   const { id } = req.params;
 
@@ -234,6 +680,47 @@ app.delete('/api/abonnements/:id', (req, res) => {
 });
 
 // Endpoint pour récupérer les abonnements en fonction de l'ID de structure
+/**
+ * @swagger
+ * /api/abonnements/{idStructure}:
+ *   get:
+ *     summary: Récupération des abonnements en fonction de l'ID de structure
+ *     description: Récupère les abonnements associés à une structure spécifiée par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: idStructure
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: ID de la structure pour laquelle récupérer les abonnements.
+ *     responses:
+ *       200:
+ *         description: Succès de la récupération des abonnements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 abonnements:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       // Propriétés spécifiques à chaque abonnement
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.get('/api/abonnements/:idStructure', (req, res) => {
   const { idStructure } = req.params;
 
@@ -249,7 +736,210 @@ app.get('/api/abonnements/:idStructure', (req, res) => {
   });
 });
 
+app.post('/api/souscrire-abonnement', (req, res) => {
+  const { idAdherent, idAbonnement } = req.body;
 
+  // Vérifier si l'adhérent et l'abonnement existent
+  // (ajouter les vérifications nécessaires ici)
+
+  const dateDebut = new Date(); // La date de début est la date actuelle
+  //la date de fin est la date de début + 1 mois
+  const dateFin = new Date(dateDebut.getFullYear(), dateDebut.getMonth() + 1, dateDebut.getDate());
+
+  const sql = 'INSERT INTO abonnements_en_cours (id_adherent, id_abonnement, date_debut, date_fin) VALUES (?, ?, ?, ?)';
+  db.query(sql, [idAdherent, idAbonnement, dateDebut, dateFin], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la souscription à l\'abonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Souscription réussie' });
+  });
+});
+
+app.get('/api/abonnements-en-cours', (req, res) => {
+  const idAdherent = req.query.idAdherent;
+
+  if (!idAdherent) {
+    return res.status(400).json({ success: false, message: 'ID de l\'adhérent non spécifié' });
+  }
+
+  const sql = 'SELECT * FROM abonnements_en_cours WHERE id_adherent = ?';
+  db.query(sql, [idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des abonnements en cours :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, abonnementsEnCours: result });
+  });
+});
+
+app.post('/api/desabonner', (req, res) => {
+  const idAdherent = req.body.idAdherent;
+  const idAbonnement = req.body.idAbonnement;
+
+  if (!idAdherent || !idAbonnement) {
+    return res.status(400).json({ success: false, message: 'ID d\'adhérent ou ID d\'abonnement non spécifié' });
+  }
+
+  const sql = 'DELETE FROM abonnements_en_cours WHERE id_adherent = ? AND id_abonnement = ?';
+  db.query(sql, [idAdherent, idAbonnement], (err, result) => {
+
+    if (err) {
+      console.error('Erreur lors du désabonnement :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    return res.json({ success: true, message: 'Désabonnement réussi' });
+  });
+});
+
+// Fonction pour formater les résultats de la requête SQL
+function formatAdherentsWithAbonnements(rawData) {
+  const formattedAdherents = [];
+
+  rawData.forEach(row => {
+    const existingAdherent = formattedAdherents.find(adherent => adherent.id === row.id);
+
+    if (existingAdherent) {
+      // Si l'adhérent existe déjà, ajouter l'abonnement en cours
+      existingAdherent.abonnementsEnCours.push({
+        id: row.id_abonnement,
+        date_debut: row.date_debut,
+        date_fin: row.date_fin
+      });
+    } else {
+      // Si l'adhérent n'existe pas, le créer avec son premier abonnement en cours
+      const newAdherent = {
+        id: row.id,
+        nom: row.nom,
+        prenom: row.prenom,
+        adresse: row.adresse,
+        code_postal: row.code_postal,
+        mail: row.mail,
+        num_identification: row.num_identification,
+        num_telephone: row.num_telephone,
+        ville: row.ville,
+        abonnementsEnCours: row.id_abonnement
+          ? [{
+              id: row.id_abonnement,
+              date_debut: row.date_debut,
+              date_fin: row.date_fin
+            }]
+          : []
+      };
+
+      formattedAdherents.push(newAdherent);
+    }
+  });
+
+  return formattedAdherents;
+}
+
+
+app.get('/api/adherents-de-structure', (req, res) => {
+  const idStructure = req.query.idStructure;
+
+  if (!idStructure) {
+    return res.status(400).json({ success: false, message: 'ID de structure non spécifié' });
+  }
+
+  const sql = `
+    SELECT adherent.*, abonnements_en_cours.*
+    FROM adherent
+    LEFT JOIN abonnements_en_cours ON adherent.id = abonnements_en_cours.id_adherent
+    WHERE adherent.id_structure = ?
+  `;
+
+  db.query(sql, [idStructure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des adhérents de la structure :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    const formattedResult = formatAdherentsWithAbonnements(result);
+    return res.json({ success: true, adherents: formattedResult });
+  });
+});
+
+//endpoints qui récupère les informations de l'abonnements en fonction de sont id
+// Exemple avec Express.js
+app.get('/api/abonnement/:idAbonnement', (req, res) => {
+  const idAbonnementEnCours = req.params.idAbonnement;
+
+  if (!idAbonnementEnCours) {
+    return res.status(400).json({ success: false, message: 'ID de l\'abonnement en cours non spécifié' });
+  }
+
+  const sql = `
+    SELECT abonnements_en_cours.id_abonnement, abonnement.*
+    FROM abonnements_en_cours
+    LEFT JOIN abonnement ON abonnements_en_cours.id_abonnement = abonnement.id
+    WHERE abonnements_en_cours.id = ?;
+  `;
+
+  db.query(sql, [idAbonnementEnCours], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des informations de l\'abonnement en cours :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: 'Abonnement en cours non trouvé' });
+    }
+
+    return res.json({ success: true, abonnement: result[0] });
+  });
+});
+
+
+ 
+
+
+
+
+/**
+ * @swagger
+ * /api/abonnements-adherent/{idStructure}:
+ *   get:
+ *     summary: Récupération des abonnements de la structure de l'adhérent
+ *     description: Récupère les abonnements associés à la structure d'un adhérent spécifié par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: idStructure
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: ID de la structure de l'adhérent pour laquelle récupérer les abonnements.
+ *     responses:
+ *       200:
+ *         description: Succès de la récupération des abonnements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 abonnements:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       // Propriétés spécifiques à chaque abonnement
+ *       500:
+ *         description: Erreur interne du serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
 app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
   const { idStructure } = req.params;
   const sql = 'SELECT * FROM abonnement WHERE structure = ?';
@@ -261,6 +951,10 @@ app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
     return res.json({ success: true, abonnements: result });
   });
 });
+
+const swaggerSpec = swaggerJSDoc(swaggerConfig);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 app.listen(port, () => {

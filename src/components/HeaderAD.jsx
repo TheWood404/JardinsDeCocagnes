@@ -2,12 +2,28 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faTimes, faUser } from '@fortawesome/free-solid-svg-icons'; // Icônes pour le menu burger
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 const HeaderAD = ({ afficherHeader }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const [utilisateurConnecte, setUtilisateurConnecte] = useState(false);
+  const navigate = useNavigate(); // Déplacez useNavigate ici
+
+
+  const HandleClickLogout = async () => {
+    localStorage.setItem('utilisateurConnecte', 'false');
+    console.log("utilisateurConnecte:", localStorage.getItem('utilisateurConnecte'));
+
+    // Mettre à jour l'état utilisateurConnecte dans votre application
+    setUtilisateurConnecte(false);
+
+    await navigate('/'); // Utilisez le hook navigate à l'intérieur de votre fonction
   };
 
   return (
@@ -30,6 +46,7 @@ const HeaderAD = ({ afficherHeader }) => {
               <FontAwesomeIcon icon={faUser} size="2xl" style={{ color: "#ffffff" }} />
             </Link>
           </div>
+
         </nav>
         <div className="md:hidden">
           <button onClick={toggleMenu}>
@@ -39,6 +56,7 @@ const HeaderAD = ({ afficherHeader }) => {
               <FontAwesomeIcon icon={faBars} className="text-green-title text-2xl" />
             )}
           </button>
+
         </div>
         {menuOpen && (
           <div className="md:hidden absolute top-16 right-4 bg-white p-4 border rounded-lg shadow-md">
@@ -56,8 +74,9 @@ const HeaderAD = ({ afficherHeader }) => {
                 <Link to="/abonnement-ad" onClick={toggleMenu}>Abonnement</Link>
               </li>
               <li>
-                <Link to="/compte-adherent" onClick={toggleMenu}>Compte Structure</Link>
+                <Link to="/compte-adherent" onClick={toggleMenu}>Compte Adhérent</Link>
               </li>
+              
             </ul>
           </div>
         )}
