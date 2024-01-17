@@ -6,24 +6,27 @@ import { useMap } from 'react-leaflet';
 
 const RoutingMachineWrapper = ({ waypoints }) => {
   const map = useMap();
-  let control = null; // Ajout d'une référence pour stocker le contrôle de routage
 
   useEffect(() => {
+    let control = null;
+
     if (map && waypoints.length === 2) {
-      // Créez le contrôle de routage et ajoutez-le à la carte
       control = L.Routing.control({
         waypoints: waypoints,
       });
 
       control.addTo(map);
-
-      return () => {
-        // Nettoyez le contrôle de routage lors du démontage du composant
-        if (control) {
-          map.removeControl(control);
-        }
-      };
     }
+
+    return () => {
+      if (control) {
+        setTimeout(() => {
+          console.log('Removing Routing Control from map...');
+          map.removeControl(control);
+          console.log('Routing Control removed from map');
+        }, 3000);
+      }
+    };
   }, [map, waypoints]);
 
   return null;

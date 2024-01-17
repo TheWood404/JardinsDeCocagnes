@@ -952,6 +952,138 @@ app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
   });
 });
 
+app.get('/api/calendrier-adherent', (req, res) => {
+  const { idAdherent } = req.query;
+
+  if (!idAdherent) {
+    return res.status(400).json({ success: false, message: 'ID de la structure de l\'adhérent non spécifié' });
+  }
+
+  const sql = `
+    SELECT jours_livrables.jour_semaine
+    FROM jours_livrables
+    JOIN adherent ON jours_livrables.id_structure = adherent.id_structure
+    WHERE adherent.id = ?
+  `;
+
+  db.query(sql, [idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération du calendrier de l\'adhérent :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    const joursLivrables = result.map((row) => row.jour_semaine);
+
+    return res.json({ success: true, joursLivrables });
+  });
+});
+
+// À ajouter côté serveur, dans votre fichier où vous définissez les routes (ex: server.js ou routes.js)
+app.post('/api/valider-jour', (req, res) => {
+  const { idAdherent, selectedDay } = req.body;
+  console.log('info', selectedDay)
+  if (!idAdherent || !selectedDay) {
+    return res.status(400).json({ success: false, message: 'Paramètres manquants.' });
+  }
+
+  // Assurez-vous d'ajuster cela en fonction de votre structure de base de données réelle.
+  const sql = `
+    INSERT INTO tournee_de_livraison (id_adherent, id_jours_livrables, id_point_de_depot)
+    VALUES (?, ?, (SELECT point_depot_favori_id FROM adherent WHERE id = ?))
+  `;
+
+  db.query(sql, [idAdherent, selectedDay, idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la validation du jour :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur.' });
+    }
+
+    return res.json({ success: true, message: 'Validation du jour réussie.' });
+  });
+});
+
+// À ajouter côté serveur, dans votre fichier où vous définissez les routes (ex: server.js ou routes.js)
+app.get('/api/get-id-for-day', (req, res) => {
+  const { day } = req.query;
+
+  if (!day) {
+    return res.status(400).json({ success: false, message: 'Date non spécifiée' });
+  }
+
+  const sql = `
+    SELECT id
+    FROM jours_livrables
+    WHERE jour_semaine = ?
+  `;
+
+  db.query(sql, [day], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération de l\'id du jour livrable :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: 'Aucun jour livrable trouvé pour la date spécifiée' });
+    }
+
+    // Assurez-vous que l'ID récupéré est une valeur numérique non nulle
+    const idSelectedDay = result[0].id || null;
+
+    return res.json({ success: true, id: idSelectedDay });
+  });
+});
+
+app.get('/api/depots-a-livrer', (req, res) => {
+  const sql = `
+    SELECT DISTINCT td.id_jours_livrables, GROUP_CONCAT(td.id_point_de_depot) as depots_a_livrer
+    FROM tournee_de_livraison td
+    GROUP BY td.id_jours_livrables
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des dépôts à livrer :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    // Organiser les résultats par id_jours_livrables
+    const depotsALivrer = result.reduce((acc, entry) => {
+      const idJoursLivrables = entry.id_jours_livrables;
+      const depots = entry.depots_a_livrer.split(',').map(Number);
+
+      acc[idJoursLivrables] = depots;
+
+      return acc;
+    }, {});
+
+    return res.json({ success: true, depotsALivrer });
+  });
+});
+
+app.get('/api/jours-livrables/:jourId', (req, res) => {
+  const { jourId } = req.params;
+
+  const sql = `
+    SELECT id, jour_semaine
+    FROM jours_livrables
+    WHERE id = ?
+  `;
+
+  db.query(sql, [jourId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des jours livrables :', err);
+      return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: 'Jour livrable non trouvé' });
+    }
+
+    const jourLivrable = result[0];
+    return res.json({ success: true, jourLivrable });
+  });
+});
+
 const swaggerSpec = swaggerJSDoc(swaggerConfig);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
