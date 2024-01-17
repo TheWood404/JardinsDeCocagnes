@@ -952,6 +952,7 @@ app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
   });
 });
 
+<<<<<<< HEAD
 app.get('/api/calendrier-adherent', (req, res) => {
   const { idAdherent } = req.query;
 
@@ -1083,6 +1084,187 @@ app.get('/api/jours-livrables/:jourId', (req, res) => {
     return res.json({ success: true, jourLivrable });
   });
 });
+=======
+
+// GET - Récupérer les informations de l'adhérent
+app.get('/api/adherent/info/:id', (req, res) => {
+  const idAdherent = req.params.id;
+  const query = 'SELECT * FROM adherent WHERE id = ?';
+
+  db.query(query, [idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des informations de l\'adhérent:', err);
+      res.status(500).json({ error: 'Erreur lors de la récupération des informations de l\'adhérent' });
+    } else {
+      res.json(result[0]);
+    }
+  });
+});
+
+// PUT - Mettre à jour les informations de l'adhérent
+app.put('/api/adherent/info/:id', (req, res) => {
+  const idAdherent = req.params.id;
+  const updatedAdherent = req.body;
+
+  const query = 'UPDATE adherent SET ? WHERE id = ?';
+
+  db.query(query, [updatedAdherent, idAdherent], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la mise à jour des informations de l\'adhérent:', err);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour des informations de l\'adhérent' });
+    } else {
+      res.json(updatedAdherent);
+    }
+  });
+});
+
+// Route pour récupérer la liste des points de dépôt
+app.get('/api/points-depot', (req, res) => {
+  const query = 'SELECT id, nom, adresse, ville FROM point_de_depot'; // Adapté selon votre structure
+
+  db.query(query, (err, pointsDeDepot) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des points de dépôt', err);
+      res.status(500).json({ error: 'Erreur lors de la récupération des points de dépôt' });
+    } else {
+      res.json(pointsDeDepot);
+    }
+  });
+});
+
+//prend l'id d'un point de dépôt et renvoie les informations de ce point de dépôt
+app.get('/api/point-de-depot/:id', (req, res) => {
+  const idPointDeDepot = req.params.id;
+  const query = 'SELECT * FROM point_de_depot WHERE id = ?';
+
+  db.query(query, [idPointDeDepot], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des informations du point de dépôt:', err);
+      res.status(500).json({ error: 'Erreur lors de la récupération des informations du point de dépôt' });
+    } else {
+      res.json(result[0]);
+    }
+  });
+});
+
+
+// Endpoint pour récupérer tous les points de dépôt
+app.get('/api/get-points-depot', (req, res) => {
+  db.query('SELECT * FROM point_de_depot', (err, results) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des points de dépôt depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// Endpoint pour créer un nouveau point de dépôt
+app.post('/api/create-point-depot', (req, res) => {
+  const nouveauPointDepot = req.body;
+  db.query('INSERT INTO point_de_depot SET ?', nouveauPointDepot, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la création du point de dépôt dans la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+      return;
+    }
+    nouveauPointDepot.id = result.insertId;
+    res.json(nouveauPointDepot);
+  });
+});
+
+// Endpoint pour mettre à jour un point de dépôt
+app.put('/api/update-point-depot/:id', (req, res) => {
+  const pointDepotId = req.params.id;
+  const updatedPointDepot = req.body;
+
+  db.query(
+    'UPDATE point_de_depot SET ? WHERE id = ?',
+    [updatedPointDepot, pointDepotId],
+    (err, result) => {
+      if (err) {
+        console.error('Erreur lors de la mise à jour du point de dépôt dans la base de données :', err);
+        res.status(500).json({ error: 'Erreur serveur' });
+        return;
+      }
+
+      if (result.affectedRows === 0) {
+        res.status(404).json({ error: 'Point de dépôt non trouvé' });
+        return;
+      }
+
+      res.json({ message: 'Point de dépôt mis à jour avec succès' });
+    }
+  );
+});
+
+// Endpoint pour supprimer un point de dépôt
+app.delete('/api/delete-point-depot/:id', (req, res) => {
+  const pointDepotId = req.params.id;
+
+  db.query('DELETE FROM point_de_depot WHERE id = ?', pointDepotId, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la suppression du point de dépôt dans la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+      return;
+    }
+
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Point de dépôt non trouvé' });
+      return;
+    }
+
+    res.json({ message: 'Point de dépôt supprimé avec succès' });
+  });
+});
+
+
+// Endpoint pour mettre a jour un point de dépôt
+app.put('/api/update-point-depot-modif/:id', async (req, res) => {
+  const { id } = req.params;
+  const updatedPointDepot = req.body;
+
+  try {
+    console.log('Updating PointDepot. ID:', id, 'Updated Data:', updatedPointDepot);
+
+    const { nom, adresse, code_postal, ville, numero_de_telephone, mail, site_web, coordonnees } = updatedPointDepot;
+
+    const result = await db.query(
+      'UPDATE point_de_depot SET nom=?, adresse=?, code_postal=?, ville=?, numero_de_telephone=?, mail=?, site_web=?, coordonnees=POINT(?, ?) WHERE id=?',
+      [
+        nom,
+        adresse,
+        code_postal,
+        ville,
+        numero_de_telephone,
+        mail,
+        site_web,
+        coordonnees.x, 
+        coordonnees.y,
+        id
+      ]
+    );
+
+    if (result.affectedRows > 0) {
+      // Fetch the updated record after the update
+      const updatedResult = await db.query('SELECT * FROM point_de_depot WHERE id=?', [id]);
+      console.log('PointDepot updated successfully:', updatedResult[0]);
+      res.json(updatedResult[0]);
+    } else {
+      console.log('PointDepot not found for ID:', id);
+      res.status(404).json({ error: 'PointDepot not found' });
+    }
+  } catch (error) {
+    console.error('Error while updating PointDepot:', error);
+    res.status(500).json({ error: 'Error while updating PointDepot' });
+  }
+});
+
+
+    
+
+>>>>>>> 5ea5e1877061ade515fbbde71dfedaaddf92e748
 
 const swaggerSpec = swaggerJSDoc(swaggerConfig);
 

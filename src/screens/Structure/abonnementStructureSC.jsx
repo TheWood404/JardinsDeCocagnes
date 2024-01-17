@@ -20,7 +20,7 @@ function Abonnement() {
       </div>
 
       {/* Un composant en dessous sur la deuxième ligne */}
-      <div className="flex justify-center mt-4 md:mt-10">
+      <div className="flex pb-10 justify-center mt-4 md:mt-10">
         <div className="sm:w-2/3 md:w-1/2 lg:w-2/3">
           <GestionAbonnementAbonnee />
         </div>
