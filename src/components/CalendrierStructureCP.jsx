@@ -12,8 +12,7 @@ const getFilteredDays = () => {
 
   for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
     const dayOfWeek = date.getDay();
-    if (dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 5) {
-      // 2: Tuesday, 3: Wednesday, 5: Friday
+    if (dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 6) {
       filteredDays.push(date.toISOString().split('T')[0]);
     }
   }
@@ -36,8 +35,4 @@ const Calendar = () => {
   );
 };
 
-<<<<<<< HEAD
 export default Calendar;
-=======
-export default Calendar;
->>>>>>> 5ea5e1877061ade515fbbde71dfedaaddf92e748

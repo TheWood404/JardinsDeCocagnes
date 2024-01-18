@@ -356,8 +356,6 @@ app.post('/api/registerstructure', (req, res) => {
   });
 });
 
-
-
 //pour la création des abonnements des structures
 
 //récupère la liste des produits dans la base de données
@@ -837,7 +835,6 @@ function formatAdherentsWithAbonnements(rawData) {
   return formattedAdherents;
 }
 
-
 app.get('/api/adherents-de-structure', (req, res) => {
   const idStructure = req.query.idStructure;
 
@@ -893,12 +890,6 @@ app.get('/api/abonnement/:idAbonnement', (req, res) => {
   });
 });
 
-
- 
-
-
-
-
 /**
  * @swagger
  * /api/abonnements-adherent/{idStructure}:
@@ -952,7 +943,6 @@ app.get('/api/abonnements-adherent/:idStructure', (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 app.get('/api/calendrier-adherent', (req, res) => {
   const { idAdherent } = req.query;
 
@@ -981,19 +971,19 @@ app.get('/api/calendrier-adherent', (req, res) => {
 
 // À ajouter côté serveur, dans votre fichier où vous définissez les routes (ex: server.js ou routes.js)
 app.post('/api/valider-jour', (req, res) => {
-  const { idAdherent, selectedDay } = req.body;
+  const { idAdherent, selectedDay, idStructureAdherent } = req.body;
   console.log('info', selectedDay)
-  if (!idAdherent || !selectedDay) {
+  if (!idAdherent || !selectedDay || !idStructureAdherent) {
     return res.status(400).json({ success: false, message: 'Paramètres manquants.' });
   }
 
   // Assurez-vous d'ajuster cela en fonction de votre structure de base de données réelle.
   const sql = `
-    INSERT INTO tournee_de_livraison (id_adherent, id_jours_livrables, id_point_de_depot)
-    VALUES (?, ?, (SELECT point_depot_favori_id FROM adherent WHERE id = ?))
+    INSERT INTO tournee_de_livraison (id_adherent, id_jours_livrables, id_point_de_depot, id_adh_structure)
+    VALUES (?, ?, (SELECT point_depot_favori_id FROM adherent WHERE id = ?), ?)
   `;
 
-  db.query(sql, [idAdherent, selectedDay, idAdherent], (err, result) => {
+  db.query(sql, [idAdherent, selectedDay, idAdherent, idStructureAdherent], (err, result) => {
     if (err) {
       console.error('Erreur lors de la validation du jour :', err);
       return res.status(500).json({ success: false, message: 'Erreur interne du serveur.' });
@@ -1034,14 +1024,17 @@ app.get('/api/get-id-for-day', (req, res) => {
   });
 });
 
-app.get('/api/depots-a-livrer', (req, res) => {
+app.get('/api/depots-a-livrer/:idAdhStructure', (req, res) => {
+  const { idAdhStructure } = req.params;
+
   const sql = `
     SELECT DISTINCT td.id_jours_livrables, GROUP_CONCAT(td.id_point_de_depot) as depots_a_livrer
     FROM tournee_de_livraison td
+    WHERE td.id_adh_structure = ?
     GROUP BY td.id_jours_livrables
   `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, [idAdhStructure], (err, result) => {
     if (err) {
       console.error('Erreur lors de la récupération des dépôts à livrer :', err);
       return res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
@@ -1060,6 +1053,8 @@ app.get('/api/depots-a-livrer', (req, res) => {
     return res.json({ success: true, depotsALivrer });
   });
 });
+
+
 
 app.get('/api/jours-livrables/:jourId', (req, res) => {
   const { jourId } = req.params;
@@ -1084,7 +1079,6 @@ app.get('/api/jours-livrables/:jourId', (req, res) => {
     return res.json({ success: true, jourLivrable });
   });
 });
-=======
 
 // GET - Récupérer les informations de l'adhérent
 app.get('/api/adherent/info/:id', (req, res) => {
@@ -1146,7 +1140,6 @@ app.get('/api/point-de-depot/:id', (req, res) => {
     }
   });
 });
-
 
 // Endpoint pour récupérer tous les points de dépôt
 app.get('/api/get-points-depot', (req, res) => {
@@ -1219,7 +1212,6 @@ app.delete('/api/delete-point-depot/:id', (req, res) => {
   });
 });
 
-
 // Endpoint pour mettre a jour un point de dépôt
 app.put('/api/update-point-depot-modif/:id', async (req, res) => {
   const { id } = req.params;
@@ -1264,7 +1256,6 @@ app.put('/api/update-point-depot-modif/:id', async (req, res) => {
 
     
 
->>>>>>> 5ea5e1877061ade515fbbde71dfedaaddf92e748
 
 const swaggerSpec = swaggerJSDoc(swaggerConfig);
 

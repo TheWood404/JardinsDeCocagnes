@@ -30,8 +30,11 @@ const TourneesMap = () => {
   useEffect(() => {
     const fetchDataAndSetDepotData = async () => {
       try {
+        // Remplacez cette valeur par celle appropriée en fonction de votre application
+        const idAdhStructure = localStorage.getItem("idStructureResponsable"); // Remplacez par l'ID de la structure
+  
         const responseCoordonnees = await axios.get('/api/coordonneespointdedepot');
-        const responseDepotsALivrer = await axios.get('/api/depots-a-livrer');
+        const responseDepotsALivrer = await axios.get(`/api/depots-a-livrer/${idAdhStructure}`);
   
         console.log('Réponse du serveur (coordonneespointdedepot):', responseCoordonnees.data);
         console.log('Réponse du serveur (depot a livrer):', responseDepotsALivrer.data);
@@ -81,9 +84,9 @@ const TourneesMap = () => {
         lineOptions: {
           styles: [
             {
-              color: '#000000', // Utiliser la couleur récupérée de la base de données
+              color: 'white', // Utiliser la couleur récupérée de la base de données
               opacity: 1,
-              weight: 8
+              weight: 4
             }
           ]
         }
@@ -99,7 +102,7 @@ const TourneesMap = () => {
           const coordonnee = depotCoordinates[index];
           const marker = L.marker(
             [coordonnee.longitude, coordonnee.latitude],
-            { icon: createCustomMarkerIcon('#000000') }
+            { icon: createCustomMarkerIcon('#FF0000') }
           );
   
           // Ajouter le marqueur à la carte

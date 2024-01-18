@@ -1,0 +1,40 @@
+image: node:latest
+
+stages:
+  - install
+  - lint
+  - test
+  - dockerize
+
+cache:
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - npm install
+
+lint_code:
+  stage: lint
+  script:
+    - npm run lint
+
+run_tests:
+  stage: test
+  script:
+    - npm test
+
+build_docker_image:
+  stage: dockerize
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t monapp .
+    - docker save monapp > monapp.tar
+  artifacts:
+    paths:
+      - monapp.tar
+  only:
+    - main

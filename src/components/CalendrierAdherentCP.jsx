@@ -46,6 +46,7 @@ const CalendrierAdherentCP = () => {
     const handleConfirmValidation = async () => {
         try {
           const idAdherent = localStorage.getItem('idAdherent');
+          const idStructureAdherent = localStorage.getItem('idStructureAdherent');
           
           // Avant de faire la requête POST, récupérez l'ID du jour depuis le backend
           const idResponse = await axios.get(`/api/get-id-for-day?day=${selectedDay}`);
@@ -53,7 +54,8 @@ const CalendrierAdherentCP = () => {
       
           const response = await axios.post('/api/valider-jour', {
             idAdherent,
-            selectedDay: idSelectedDay, // Envoyez l'ID du jour, pas le nom du jour
+            selectedDay: idSelectedDay,
+            idStructureAdherent // Envoyez l'ID du jour, pas le nom du jour
           });
       
           console.log('selectedDay', selectedDay);
