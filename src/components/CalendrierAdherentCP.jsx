@@ -71,35 +71,54 @@ const CalendrierAdherentCP = () => {
       };
       
   
-    return (
-      <div>
-        <h2>Calendrier de l'adhérent</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          <div>
-            <ul>
-              {joursLivrables.map((jour, index) => (
-                <li key={index} onClick={() => handleDayClick(jour)} className={selectedDay === jour ? 'selected' : ''}>
-                  {jour}
-                </li>
-              ))}
-            </ul>
-            {selectedDay && confirming && (
-              <div>
-                <p>Voulez-vous vraiment valider le jour {selectedDay} ?</p>
-                <button onClick={handleConfirmValidation}>Confirmer</button>
-                <button onClick={handleCancelConfirmation}>Annuler</button>
-              </div>
-            )}
-            {selectedDayId && (
-              <p>ID du jour sélectionné : {selectedDayId}</p>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  };
+      return (
+        <div className="p-4">
+          <h2 className="text-2xl font-bold mb-4">Calendrier de l'adhérent</h2>
+          
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="space-y-4">
+              <ul className="list-disc pl-4">
+                {joursLivrables.map((jour, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleDayClick(jour)}
+                    className={`cursor-pointer ${
+                      selectedDay === jour ? 'text-blue-500 font-semibold' : ''
+                    }`}
+                  >
+                    {jour}
+                  </li>
+                ))}
+              </ul>
+      
+              {selectedDay && confirming && (
+                <div className="mt-4">
+                  <p>Voulez-vous vraiment valider le jour {selectedDay} ?</p>
+                  <button
+                    className="bg-green-500 text-white px-4 py-1 mr-2 rounded"
+                    onClick={handleConfirmValidation}
+                  >
+                    Confirmer
+                  </button>
+                  <button
+                    className="bg-gray-500 text-white px-4 py-1 rounded"
+                    onClick={handleCancelConfirmation}
+                  >
+                    Annuler
+                  </button>
+                </div>
+              )}
+      
+              {selectedDayId && (
+                <p className="mt-4">ID du jour sélectionné : {selectedDayId}</p>
+              )}
+            </div>
+          )}
+        </div>
+      );
+              }      
   
   export default CalendrierAdherentCP;
   

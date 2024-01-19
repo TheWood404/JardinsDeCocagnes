@@ -1253,8 +1253,168 @@ app.put('/api/update-point-depot-modif/:id', async (req, res) => {
   }
 });
 
+// Endpoint pour récupérer les jours livrables
+app.get('/jours-livrables', (req, res) => {
+  const query = 'SELECT * FROM jours_livrables';
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des jours livrables depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
 
-    
+app.get('/jours-livrables', (req, res) => {
+  const id_structure = req.query.id_structure || localStorage.getItem('idStructure');
+  if (!id_structure) {
+    return res.status(400).json({ error: 'ID de structure manquant' });
+  }
+
+  const query = 'SELECT * FROM jours_livrables WHERE id_structure = ?';
+  db.query(query, [id_structure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des jours livrables depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+
+
+app.post('/ajouter-jour-livrable', (req, res) => {
+  const { id_structure, jour_semaine } = req.body;
+
+  if (!id_structure || !jour_semaine) {
+    return res.status(400).json({ error: 'Les champs id_structure et jour_semaine sont obligatoires' });
+  }
+
+  // Vérifiez si un jour existe déjà à la même date pour la structure
+  const checkQuery = 'SELECT * FROM jours_non_livrables WHERE id_structure = ? AND jour_semaine = ?';
+  db.query(checkQuery, [id_structure, jour_semaine], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('Erreur lors de la vérification du jour non livrable existant :', checkErr);
+      return res.status(500).json({ error: 'Erreur serveur' });
+    }
+
+    if (checkResult.length > 0) {
+      return res.status(400).json({ error: 'Un jour non livrable existe déjà à cette date pour cette structure' });
+    }
+
+    // Si tout est OK, ajoutez le jour livrable
+    const insertQuery = 'INSERT INTO jours_livrables (id_structure, jour_semaine) VALUES (?, ?)';
+    db.query(insertQuery, [id_structure, jour_semaine], (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error('Erreur lors de l\'ajout du jour livrable :', insertErr);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+
+      res.json({ message: 'Jour livrable ajouté avec succès' });
+    });
+  });
+});
+
+//pour les jours non-livrables recup
+app.get('/jours-non-livrables', (req, res) => {
+  const id_structure = req.query.id_structure || localStorage.getItem('idStructure');
+  if (!id_structure) {
+    return res.status(400).json({ error: 'ID de structure manquant' });
+  }
+
+  const query = 'SELECT * FROM jours_non_livrables WHERE id_structure = ?';
+  db.query(query, [id_structure], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des jours non livrables depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+//pour les jours non-livrables ajout
+app.post('/ajouter-jour-non-livrable', (req, res) => {
+  const { id_structure, jour_semaine } = req.body;
+
+  if (!id_structure || !jour_semaine) {
+    return res.status(400).json({ error: 'Les champs id_structure et jour_semaine sont obligatoires' });
+  }
+
+  // Vérifiez si un jour existe déjà à la même date pour la structure
+  const checkQuery = 'SELECT * FROM jours_livrables WHERE id_structure = ? AND jour_semaine = ?';
+  db.query(checkQuery, [id_structure, jour_semaine], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('Erreur lors de la vérification du jour livrable existant :', checkErr);
+      return res.status(500).json({ error: 'Erreur serveur' });
+    }
+
+    if (checkResult.length > 0) {
+      return res.status(400).json({ error: 'Un jour livrable existe déjà à cette date pour cette structure' });
+    }
+
+    // Si tout est OK, ajoutez le jour non livrable
+    const insertQuery = 'INSERT INTO jours_non_livrables (id_structure, jour_semaine) VALUES (?, ?)';
+    db.query(insertQuery, [id_structure, jour_semaine], (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error('Erreur lors de l\'ajout du jour non livrable :', insertErr);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+
+      res.json({ message: 'Jour non livrable ajouté avec succès' });
+    });
+  });
+});
+
+// Supprimer un jour livrable
+app.delete('/supprimer-jour-livrable/:id', (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID du jour livrable manquant' });
+  }
+
+  const deleteQuery = 'DELETE FROM jours_livrables WHERE id = ?';
+  db.query(deleteQuery, [id], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la suppression du jour livrable depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json({ message: 'Jour livrable supprimé avec succès' });
+    }
+  });
+});
+
+// Supprimer un jour non livrable
+app.delete('/supprimer-jour-non-livrable/:id', (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID du jour non livrable manquant' });
+  }
+
+  const deleteQuery = 'DELETE FROM jours_non_livrables WHERE id = ?';
+  db.query(deleteQuery, [id], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la suppression du jour non livrable depuis la base de données :', err);
+      res.status(500).json({ error: 'Erreur serveur' });
+    } else {
+      res.json({ message: 'Jour non livrable supprimé avec succès' });
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
 
 
 const swaggerSpec = swaggerJSDoc(swaggerConfig);
